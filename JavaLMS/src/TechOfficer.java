@@ -18,6 +18,19 @@ public class TechOfficer {
     private JComboBox comboBox2;
     private JButton button7;
     private JButton button8;
+    private JPanel cardpanel;
+    private JPanel card2panel;
+    private JPanel card1panel;
+    private JPanel left;
+    private JPanel right;
+    private JLabel addlabel;
+    private JPanel titlepanel;
+    private JLabel viewlabel;
+    private JComboBox comboBox3;
+    private JButton deleteButton;
+    private JButton editButton;
+    private JScrollBar scrollBar1;
+    private JTable table1;
 
     public TechOfficer() {
         JFrame frame = new JFrame("Add Attendance");
@@ -28,6 +41,12 @@ public class TechOfficer {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setResizable(false);
+
+
+
+
+
+
 
     }
 
