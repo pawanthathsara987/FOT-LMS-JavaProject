@@ -4,12 +4,12 @@ public class TechOfficer {
     private JPanel MainPanel;
     private JLabel name;
     private JLabel picture;
-    private JButton button1;
-    private JButton button2;
-    private JButton button3;
-    private JButton button4;
-    private JButton button5;
-    private JButton button6;
+    private JButton addAttendanceButton;
+    private JButton viewAttendanceButton;
+    private JButton addMedicalButton;
+    private JButton viewMedicalButton;
+    private JButton timeTableButton;
+    private JButton noticeButton;
     private JTextField textField1;
     private JTextField textField2;
     private JTextField textField3;
@@ -31,6 +31,16 @@ public class TechOfficer {
     private JButton editButton;
     private JScrollBar scrollBar1;
     private JTable table1;
+    private JButton submitButton;
+    private JButton clearButton;
+    private JTextField textField5;
+    private JTextField textField6;
+    private JTextField textField7;
+    private JComboBox comboBox4;
+    private JTextField textField8;
+    private JTextArea textArea1;
+    private JPanel jpanel;
+    private JPanel card3panel;
 
     public TechOfficer() {
         JFrame frame = new JFrame("Add Attendance");
