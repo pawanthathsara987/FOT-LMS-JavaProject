@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Lecturer">
-  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+  <grid id="27dc6" binding="MainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
       <xy x="20" y="20" width="1400" height="750"/>
     </constraints>
@@ -11,7 +11,7 @@
     </properties>
     <border type="none"/>
     <children>
-      <grid id="bd27c" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="bd27c" binding="sidePanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="West"/>
         <properties>
@@ -22,7 +22,7 @@
         </properties>
         <border type="none"/>
         <children>
-          <grid id="122a0" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="122a0" binding="lecturerLabel" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="0" indent="0" use-parent-layout="false">
                 <minimum-size width="300" height="100"/>
@@ -51,7 +51,7 @@
               </component>
             </children>
           </grid>
-          <grid id="680bb" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="680bb" binding="actionButtons" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="10" left="10" bottom="10" right="10"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -137,14 +137,14 @@
           </grid>
         </children>
       </grid>
-      <grid id="6a48c" layout-manager="CardLayout" hgap="0" vgap="0">
+      <grid id="6a48c" binding="parentPanel" layout-manager="CardLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
         <properties>
           <background color="-13628143"/>
         </properties>
         <border type="none"/>
         <children>
-          <grid id="b58ff" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="b58ff" binding="addLecMaterialPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <card name="Card1"/>
@@ -201,9 +201,9 @@
                     <margin top="0" left="0" bottom="0" right="300"/>
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-                        <minimum-size width="1100" height="50"/>
-                        <preferred-size width="1100" height="50"/>
-                        <maximum-size width="1100" height="50"/>
+                        <minimum-size width="1100" height="70"/>
+                        <preferred-size width="1100" height="70"/>
+                        <maximum-size width="1100" height="70"/>
                       </grid>
                     </constraints>
                     <properties/>
@@ -259,9 +259,9 @@
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
-                        <minimum-size width="1100" height="50"/>
-                        <preferred-size width="1100" height="50"/>
-                        <maximum-size width="1100" height="50"/>
+                        <minimum-size width="1100" height="70"/>
+                        <preferred-size width="1100" height="70"/>
+                        <maximum-size width="1100" height="70"/>
                       </grid>
                     </constraints>
                     <properties/>
@@ -311,9 +311,9 @@
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <minimum-size width="1100" height="50"/>
-                        <preferred-size width="1100" height="50"/>
-                        <maximum-size width="1100" height="50"/>
+                        <minimum-size width="1100" height="70"/>
+                        <preferred-size width="1100" height="70"/>
+                        <maximum-size width="1100" height="70"/>
                       </grid>
                     </constraints>
                     <properties/>
@@ -346,9 +346,9 @@
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <minimum-size width="1100" height="50"/>
-                        <preferred-size width="1100" height="50"/>
-                        <maximum-size width="1100" height="50"/>
+                        <minimum-size width="1100" height="70"/>
+                        <preferred-size width="1100" height="70"/>
+                        <maximum-size width="1100" height="70"/>
                       </grid>
                     </constraints>
                     <properties/>
@@ -381,9 +381,9 @@
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <minimum-size width="1100" height="50"/>
-                        <preferred-size width="1100" height="50"/>
-                        <maximum-size width="1100" height="50"/>
+                        <minimum-size width="1100" height="70"/>
+                        <preferred-size width="1100" height="70"/>
+                        <maximum-size width="1100" height="70"/>
                       </grid>
                     </constraints>
                     <properties/>
@@ -421,9 +421,9 @@
                     <margin top="0" left="0" bottom="0" right="650"/>
                     <constraints>
                       <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <minimum-size width="1100" height="50"/>
-                        <preferred-size width="1100" height="50"/>
-                        <maximum-size width="1100" height="50"/>
+                        <minimum-size width="1100" height="70"/>
+                        <preferred-size width="1100" height="70"/>
+                        <maximum-size width="1100" height="70"/>
                       </grid>
                     </constraints>
                     <properties/>
@@ -470,16 +470,128 @@
               </grid>
             </children>
           </grid>
-          <grid id="5168" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="5168" binding="addMarksPanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <card name="Card2"/>
             </constraints>
             <properties/>
             <border type="none"/>
-            <children/>
+            <children>
+              <grid id="fa02" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="50" left="50" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="10" fill="0" indent="0" use-parent-layout="false">
+                    <minimum-size width="1100" height="100"/>
+                    <preferred-size width="1100" height="100"/>
+                    <maximum-size width="1100" height="100"/>
+                  </grid>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="a91fd" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font name="JetBrains Mono" size="24" style="1"/>
+                      <text value="Add Marks "/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <vspacer id="bdb84">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </vspacer>
+              <grid id="a2958" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="300"/>
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="dbad3" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font size="20"/>
+                      <text value="Subject :"/>
+                    </properties>
+                  </component>
+                  <hspacer id="63ca0">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                        <minimum-size width="-1" height="50"/>
+                        <preferred-size width="-1" height="50"/>
+                        <maximum-size width="-1" height="50"/>
+                      </grid>
+                    </constraints>
+                  </hspacer>
+                  <component id="4aea3" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="c190a" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="c8710" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="7" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <font size="18"/>
+                      <text value="Select Marks Type :"/>
+                    </properties>
+                  </component>
+                  <component id="53943" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <minimum-size width="200" height="-1"/>
+                        <preferred-size width="200" height="-1"/>
+                        <maximum-size width="200" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <model>
+                        <item value=""/>
+                        <item value="Mid Exam Marks"/>
+                        <item value="End Practical Marks"/>
+                        <item value="End Theory Marks"/>
+                        <item value="Quiz Marks"/>
+                        <item value="Assignment Marks"/>
+                      </model>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="f1fd1" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children/>
+              </grid>
+            </children>
           </grid>
-          <grid id="78a83" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="78a83" binding="viewStuDetailsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <card name="Card3"/>
@@ -488,7 +600,7 @@
             <border type="none"/>
             <children/>
           </grid>
-          <grid id="6ce33" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="6ce33" binding="viewStuEligibilityPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <card name="Card4"/>
@@ -497,7 +609,7 @@
             <border type="none"/>
             <children/>
           </grid>
-          <grid id="7c68a" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="7c68a" binding="viewTimeTablePanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <card name="Card5"/>
@@ -506,7 +618,7 @@
             <border type="none"/>
             <children/>
           </grid>
-          <grid id="d6342" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="d6342" binding="viewMedicalPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <card name="Card6"/>
