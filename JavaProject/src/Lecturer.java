@@ -1,4 +1,8 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.text.TableView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,6 +29,16 @@ public class Lecturer {
     private JPanel sidePanel;
     private JPanel lecturerLabel;
     private JPanel actionButtons;
+    private JTable stuMarksTable;
+    private JPanel tablePanel;
+    private JTextField enteredMarksField;
+    private JPanel marksTypePanel;
+    private JPanel subjectDisplayPanel;
+    private JPanel addMarksTitlePanel;
+    private JPanel marksEnterPanel;
+    private JPanel marksPanel;
+    private JButton addMarksButton1;
+    private JLabel studentIDPanel;
 
     public Lecturer() {
 
@@ -34,6 +48,8 @@ public class Lecturer {
         frame.setSize(1400,750);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+
+        createTable();
 
         addLectureMaterialButton.addActionListener(new ActionListener() {
             @Override
@@ -89,5 +105,28 @@ public class Lecturer {
                 parentPanel.revalidate();
             }
         });
+    }
+
+    public void createTable() {
+        stuMarksTable.setModel(new DefaultTableModel(
+                null,
+                new String [] {"Stu_ID","Stu_Name","Quiz Marks","Assignments Marks","Mid Marks","End Practical","End Theory"}
+        ));
+
+        TableColumnModel columns = stuMarksTable.getColumnModel();
+        columns.getColumn(0).setMinWidth(100);
+        columns.getColumn(0).setMaxWidth(100);
+        columns.getColumn(1).setMinWidth(200);
+        columns.getColumn(1).setMaxWidth(200);
+        columns.getColumn(2).setMinWidth(150);
+        columns.getColumn(2).setMaxWidth(150);
+        columns.getColumn(3).setMinWidth(150);
+        columns.getColumn(3).setMaxWidth(150);
+        columns.getColumn(4).setMinWidth(150);
+        columns.getColumn(4).setMaxWidth(150);
+        columns.getColumn(5).setMinWidth(150);
+        columns.getColumn(5).setMaxWidth(150);
+        columns.getColumn(6).setMinWidth(150);
+        columns.getColumn(6).setMaxWidth(150);
     }
 }
