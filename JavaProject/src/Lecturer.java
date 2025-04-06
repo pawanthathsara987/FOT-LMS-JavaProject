@@ -1,8 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableRowSorter;
-import javax.swing.text.TableView;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -38,7 +36,10 @@ public class Lecturer {
     private JPanel marksEnterPanel;
     private JPanel marksPanel;
     private JButton addMarksButton1;
-    private JLabel studentIDPanel;
+    private JLabel studentIDLabel;
+    private JPanel studentIDLabelPanel;
+    private JPanel studentIDTextFieldPanel;
+    private JPanel addMarksButtonPanel;
 
     public Lecturer() {
 
