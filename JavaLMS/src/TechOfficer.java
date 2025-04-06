@@ -41,6 +41,10 @@ public class TechOfficer {
     private JTextArea textArea1;
     private JPanel jpanel;
     private JPanel card3panel;
+    private JComboBox comboBox5;
+    private JButton deleteButton1;
+    private JButton updateButton;
+    private JTable table2;
 
     public TechOfficer() {
         JFrame frame = new JFrame("Add Attendance");
