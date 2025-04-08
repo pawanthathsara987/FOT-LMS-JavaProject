@@ -44,6 +44,15 @@ public class Admin {
     private JPanel tdelete_p;
     private JButton tdelete_btn;
     private JButton tcreate_btn;
+    private JComboBox comboBox2;
+    private JComboBox comboBox3;
+    private JTextArea textArea1;
+    private JComboBox comboBox4;
+    private JPanel ndelete_panel;
+    private JPanel noticeformcard;
+    private JPanel ncreate_panel;
+    private JButton ndelete_btn;
+    private JButton ncreate_btn;
     private JFrame frame;
 
     public Admin() {
@@ -68,6 +77,9 @@ public class Admin {
         //timetable panel card layout
         timeformcard.setLayout(cardLayout);
 
+        //notice panel card layout
+        noticeformcard.setLayout(cardLayout);
+
         // Add panels to card container with correct names from .form file
         cardContainer.add(crtupanel, "Card1");  // Create User
         cardContainer.add(crtcpanel, "Card2");  // Create Course
@@ -87,6 +99,10 @@ public class Admin {
         timeformcard.add(tcreate_p, "tCard1");
         timeformcard.add(tdelete_p, "tCard2");
 
+        //Add panel to the card container for noticeformcard
+        noticeformcard.add(ncreate_panel, "nCard1");
+        noticeformcard.add(ndelete_panel, "nCard2");
+
         // Button listeners with correct card names
         createUserButton.addActionListener(e -> cardLayout.show(cardContainer, "Card1"));
         createCourseButton.addActionListener(e -> cardLayout.show(cardContainer, "Card2"));
@@ -105,6 +121,10 @@ public class Admin {
         //Button function for create, delete and edit for timeformcard
         tcreate_btn.addActionListener(e -> cardLayout.show(timeformcard, "tCard1"));
         tdelete_btn.addActionListener(e -> cardLayout.show(timeformcard, "tCard2"));
+
+        //Button function for create, delete and edit for noticeformcard
+        ncreate_btn.addActionListener(e -> cardLayout.show(noticeformcard, "nCard1"));
+        ndelete_btn.addActionListener(e -> cardLayout.show(noticeformcard, "nCard2"));
 
         // Sign Out button
         signOutButton.addActionListener(e -> {
