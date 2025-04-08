@@ -1,6 +1,5 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -42,6 +41,8 @@ public class Lecturer {
     private JPanel addMarksButtonPanel;
     private JPanel timeTablePanel;
     private JPanel studentEligibilityPanel;
+    private JTable studentDetailsTable;
+    private JPanel stuDetailsTablePanel;
 
     public Lecturer() {
 
@@ -52,7 +53,8 @@ public class Lecturer {
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
 
-        createTable();
+        marksTable();
+        studentDetailsTable();
 
         addLectureMaterialButton.addActionListener(new ActionListener() {
             @Override
@@ -110,7 +112,15 @@ public class Lecturer {
         });
     }
 
-    public void createTable() {
+    public void studentDetailsTable(){
+        Object[] [] data = {};
+
+        studentDetailsTable.setModel(new DefaultTableModel(
+                data,
+                new String [] {"Username","First Name","Last Name","Email","Phone Number","Date of Birth"}
+        ));
+    }
+    public void marksTable() {
         Object[] [] data = {
                 {"TG/2022/1365","KPGS SANDARUWAN",8.75,null,38.50,18.00,55.55},
                 {"TG/2022/1366","SDP LAKSHAN",9.00,null,35.55,20.00,60.45},
