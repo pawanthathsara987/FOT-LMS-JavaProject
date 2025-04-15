@@ -61,6 +61,7 @@ public class Lecturer {
     private JButton addMarksButton1;
     private JTextField stuMarksField;
     private JTable addStudentMarksTable;
+    private JComboBox studentLevelComboBox;
 
     private String stuid;
     private String marksValue;
@@ -69,6 +70,8 @@ public class Lecturer {
     private String stuid2;
     private String marksValue2;
     private String markType2;
+
+    private int stuLevel;
 
     private Connection conn = null;
     private Statement stmt = null;
@@ -81,8 +84,6 @@ public class Lecturer {
         frame.setSize(1400,750);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
-
-        studentDetailsTable();
 
         addLectureMaterialButton.addActionListener(new ActionListener() {
             @Override
@@ -348,14 +349,54 @@ public class Lecturer {
 
             }
         });
-    }
 
-    public void studentDetailsTable(){
-        Object[] [] data = {};
+        studentLevelComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                stuLevel = studentLevelComboBox.getSelectedIndex();
 
-        studentDetailsTable.setModel(new DefaultTableModel(
-                data,
-                new String [] {"Username","First Name","Last Name","Email","Phone Number","Date of Birth"}
-        ));
+                if (stuLevel != 0) {
+                    showStudentDetails(stuLevel);
+                }
+            }
+
+            public void showStudentDetails(int stuLevel){
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String sql = "SELECT * FROM student WHERE stu_level=?";
+
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setInt(1, stuLevel);
+                    ResultSet rs = pstmt.executeQuery();
+
+                    String[] columnNames = {"stuid","username","password","fname","lname","email","dob","pnumber","ppicture","stu_level"};
+                    DefaultTableModel model = new DefaultTableModel(columnNames,0);
+
+                    while (rs.next()) {
+                        Object[] row = {
+                                rs.getString("stuid"),
+                                rs.getString("username"),
+                                rs.getString("password"),
+                                rs.getString("fname"),
+                                rs.getString("lname"),
+                                rs.getString("email"),
+                                rs.getString("dob"),
+                                rs.getString("pnumber"),
+                                rs.getString("ppicture"),
+                                rs.getInt("stu_level")
+                        };
+                        model.addRow(row);
+
+                        studentDetailsTable.setModel(model);
+                        studentDetailsTable.repaint();
+                        studentDetailsTable.validate();
+                    }
+                } catch (SQLException e) {
+                    System.out.println("Statement error: " + e.getMessage());
+                }
+            }
+        });
     }
 }
