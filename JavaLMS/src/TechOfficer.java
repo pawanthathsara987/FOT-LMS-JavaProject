@@ -1,8 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class TechOfficer {
     private JPanel MainPanel;
@@ -76,6 +74,40 @@ public class TechOfficer {
     private JLabel aedate;
     private JPanel attenDeletepanel;
     private JPanel attenbodypanel;
+    private JPanel medbody_panel;
+    private JPanel medcard;
+    private JPanel medcreate;
+    private JPanel med_edit;
+    private JPanel medDelete;
+    private JScrollBar scrollBar4;
+    private JTable med_table;
+    private JTextField medtextstu;
+    private JTextField medtextcourse;
+    private JComboBox med_comboBox1;
+    private JComboBox med_comboBox2;
+    private JPanel medtitlepanel;
+    private JPanel medvtable;
+    private JButton med_editButton;
+    private JButton med_deleteButton;
+    private JButton med_createButton;
+    private JPanel med_button;
+    private JTextField textField3;
+    private JTextField textField5;
+    private JComboBox comboBox4;
+    private JComboBox comboBox6;
+    private JButton editButton1;
+    private JLabel medstu;
+    private JLabel medcourse;
+    private JLabel meddate;
+    private JLabel med_des;
+    private JLabel medestu;
+    private JLabel medecourse;
+    private JLabel mededate;
+    private JLabel mededes;
+    private JLabel medtitlelabel;
+    private JTextField textField1;
+    private JButton deleteButton2;
+    private JButton submitButton;
 
     public TechOfficer() {
         JFrame frame = new JFrame("Add Attendance");
@@ -101,6 +133,12 @@ public class TechOfficer {
         crtattenpanel.add(Editatten,"card6");
         crtattenpanel.add(deleteatten,"card7");
 
+        medcard.setLayout(cardlayout);
+
+        medcard.add(medcreate,"mcard1");
+        medcard.add(med_edit,"mcard2");
+        medcard.add(medDelete,"mcard3");
+
         addAttendanceButton.addActionListener(e -> cardlayout.show(cardpanel,"card1"));
         viewAttendanceButton.addActionListener(e -> cardlayout.show(cardpanel,"card4"));
         addMedicalButton.addActionListener(e -> cardlayout.show(cardpanel,"card2"));
@@ -110,10 +148,13 @@ public class TechOfficer {
         editButton2.addActionListener(e -> cardlayout.show(crtattenpanel,"card6"));
         deleteButton3.addActionListener(e -> cardlayout.show(crtattenpanel,"card7"));
 
+        med_createButton.addActionListener(e -> cardlayout.show(medcard,"mcard1"));
+        med_editButton.addActionListener(e -> cardlayout.show(medcard,"mcard2"));
+        med_deleteButton.addActionListener(e -> cardlayout.show(medcard,"mcard3"));
 
         createAttendanceTable();
 
-
+        createMedicalTable();
 
 
     }
@@ -126,6 +167,14 @@ public class TechOfficer {
         attenViewtable.setModel(model);
 
 
+    }
+
+    private void createMedicalTable() {
+        String[] medcol = {"Medical ID","Student ID","Course Code","Date", "Description"};
+        Object[][] data = {};
+
+        DefaultTableModel model = new DefaultTableModel(data, medcol);
+        med_table.setModel(model);
     }
 
     public static void main(String[] args) {
