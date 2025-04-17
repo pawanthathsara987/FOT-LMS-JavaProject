@@ -19,7 +19,7 @@
   <component name="DBNavigator.Project.DatabaseBrowserManager">
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
-    <show-object-properties value="true" />
+    <show-object-properties value="false" />
     <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
@@ -32,14 +32,15 @@
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files>
-      <object connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" object-ref="schemas/javalms/tables/student" />
-      <object connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" object-ref="schemas/javalms/tables/department" />
+      <object connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" object-ref="schemas/javalms/tables/admin" />
     </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="4afda9da-883d-4cd0-86d0-74f60ed63b76" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" dataset="javalms.lecturer" active-filter-id="EMPTY_FILTER" />
+    <filter-actions connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" dataset="javalms.technician" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" dataset="javalms.department" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" dataset="javalms.student" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" dataset="javalms.admin" active-filter-id="EMPTY_FILTER" />

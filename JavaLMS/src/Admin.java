@@ -55,7 +55,10 @@ public class Admin {
     private JButton ncreate_btn;
     private JFrame frame;
 
-    public Admin() {
+    public String username;
+
+    public Admin(String username) {
+        this.username = username;
         frame = new JFrame("Create User");
         frame.setContentPane(Main_panel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -5,10 +5,11 @@
       <xy x="191" y="8" width="584" height="354"/>
     </constraints>
     <properties>
-      <maximumSize width="500" height="180"/>
-      <minimumSize width="500" height="180"/>
+      <background color="-11444378"/>
+      <maximumSize width="500" height="220"/>
+      <minimumSize width="500" height="220"/>
       <opaque value="false"/>
-      <preferredSize width="500" height="180"/>
+      <preferredSize width="500" height="220"/>
     </properties>
     <border type="none"/>
     <children>
@@ -30,8 +31,19 @@
         <constraints>
           <card name="Card1"/>
         </constraints>
-        <properties/>
-        <border type="none"/>
+        <properties>
+          <background color="-16777216"/>
+          <enabled value="true"/>
+          <focusable value="true"/>
+          <opaque value="false"/>
+          <requestFocusEnabled value="true"/>
+          <verifyInputWhenFocusTarget value="true"/>
+          <visible value="true"/>
+        </properties>
+        <border type="none">
+          <font name="Courier New"/>
+          <title-color color="-1974043"/>
+        </border>
         <children>
           <grid id="4667d" layout-manager="FormLayout">
             <rowspec value="center:d:noGrow"/>
@@ -49,6 +61,7 @@
                   <forms/>
                 </constraints>
                 <properties>
+                  <background color="-11444378"/>
                   <font name="Comic Sans MS" size="20" style="2"/>
                   <horizontalAlignment value="0"/>
                   <text value="Login"/>
@@ -63,9 +76,9 @@
             </constraints>
             <properties>
               <inheritsPopupMenu value="true"/>
-              <maximumSize width="0" height="20"/>
-              <minimumSize width="0" height="20"/>
-              <preferredSize width="0" height="20"/>
+              <maximumSize width="0" height="10"/>
+              <minimumSize width="0" height="10"/>
+              <preferredSize width="0" height="10"/>
             </properties>
             <border type="none"/>
             <children/>
@@ -89,6 +102,8 @@
               <component id="cd063" class="javax.swing.JTextField" binding="textField1" default-binding="true">
                 <constraints border-constraint="East"/>
                 <properties>
+                  <maximumSize width="250" height="30"/>
+                  <minimumSize width="250" height="30"/>
                   <preferredSize width="250" height="30"/>
                 </properties>
               </component>
@@ -112,9 +127,11 @@
                   <text value="Password :"/>
                 </properties>
               </component>
-              <component id="6f833" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+              <component id="273e" class="javax.swing.JPasswordField" binding="passwordField1" default-binding="true">
                 <constraints border-constraint="East"/>
                 <properties>
+                  <maximumSize width="250" height="30"/>
+                  <minimumSize width="250" height="30"/>
                   <preferredSize width="250" height="30"/>
                 </properties>
               </component>
@@ -175,51 +192,91 @@
           </grid>
         </children>
       </grid>
-      <grid id="8114b" binding="Loading_panel" layout-manager="FormLayout">
-        <rowspec value="center:d:noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="fill:d:grow"/>
+      <grid id="8114b" binding="Loading_panel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
           <card name="Card2"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <vspacer id="23e08">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-vert="false"/>
-            </constraints>
-          </vspacer>
-          <grid id="f9760" layout-manager="BorderLayout" hgap="0" vgap="0">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
+          <grid id="6084" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="Center"/>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="85089" class="javax.swing.JLabel">
+              <grid id="f257b" layout-manager="BorderLayout" hgap="0" vgap="0">
+                <constraints border-constraint="North"/>
+                <properties>
+                  <background color="-11444378"/>
+                  <maximumSize width="500" height="150"/>
+                  <minimumSize width="500" height="150"/>
+                  <preferredSize width="500" height="150"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="f219f" class="javax.swing.JLabel">
+                    <constraints border-constraint="Center"/>
+                    <properties>
+                      <background color="-16703898"/>
+                      <font name="JetBrains Mono ExtraBold" size="20" style="2"/>
+                      <foreground color="-16777216"/>
+                      <horizontalAlignment value="0"/>
+                      <text value="Learning Management System"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="5f2cd" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints border-constraint="Center"/>
                 <properties>
-                  <font name="Droid Serif" size="22"/>
-                  <horizontalAlignment value="0"/>
-                  <text value="Learning Management System"/>
+                  <background color="-11444378"/>
+                  <maximumSize width="500" height="70"/>
+                  <minimumSize width="500" height="70"/>
+                  <preferredSize width="500" height="70"/>
                 </properties>
-              </component>
+                <border type="none"/>
+                <children>
+                  <grid id="3fa82" layout-manager="BorderLayout" hgap="0" vgap="0">
+                    <constraints border-constraint="South"/>
+                    <properties>
+                      <background color="-11444378"/>
+                      <maximumSize width="2147483647" height="10"/>
+                      <minimumSize width="10" height="10"/>
+                      <preferredSize width="146" height="10"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="71fb1" class="javax.swing.JProgressBar" binding="progressBar1" default-binding="true">
+                        <constraints border-constraint="Center"/>
+                        <properties>
+                          <foreground color="-16777216"/>
+                          <maximumSize width="32767" height="10"/>
+                          <minimumSize width="10" height="10"/>
+                          <preferredSize width="146" height="10"/>
+                          <stringPainted value="false"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="5610" layout-manager="BorderLayout" hgap="0" vgap="0">
+                    <constraints border-constraint="Center"/>
+                    <properties>
+                      <background color="-11444378"/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <component id="db42e" class="javax.swing.JLabel" binding="loading_text">
+                        <constraints border-constraint="South"/>
+                        <properties>
+                          <horizontalAlignment value="0"/>
+                          <text value="%"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
             </children>
-          </grid>
-          <grid id="6a039" layout-manager="BorderLayout" hgap="0" vgap="0">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children/>
           </grid>
         </children>
       </grid>

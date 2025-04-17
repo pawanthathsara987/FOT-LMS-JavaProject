@@ -40,7 +40,7 @@
             <properties>
               <borderPainted value="true"/>
               <font size="18"/>
-              <text value="Create User"/>
+              <text value="User"/>
             </properties>
           </component>
           <component id="f8339" class="javax.swing.JButton" binding="createCourseButton" default-binding="true">
@@ -52,7 +52,7 @@
             </constraints>
             <properties>
               <font size="18"/>
-              <text value="Create Course"/>
+              <text value="Course"/>
             </properties>
           </component>
           <component id="b3111" class="javax.swing.JButton" binding="createTimeTableButton" default-binding="true">
@@ -64,7 +64,7 @@
             </constraints>
             <properties>
               <font size="18"/>
-              <text value="Create Time Table"/>
+              <text value="Time Table"/>
             </properties>
           </component>
           <component id="e572d" class="javax.swing.JButton" binding="createNoticeButton" default-binding="true">
@@ -76,7 +76,7 @@
             </constraints>
             <properties>
               <font size="18"/>
-              <text value="Create  Notice"/>
+              <text value="Notice"/>
             </properties>
           </component>
           <hspacer id="ab265">
