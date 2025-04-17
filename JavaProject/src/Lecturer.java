@@ -2,6 +2,11 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +19,8 @@ public class Lecturer {
     private JButton UpdateMarksButton;
     private JButton addMarksButton;
     private JButton viewStudentEligibilityButton;
-    private JComboBox comboBox1;
-    private JButton uploadFileButton;
+    private JComboBox stuLevelComboBox;
+    private JButton uploadLecNoteButton;
     private JTextField textField1;
     private JButton uploadButton;
     private JComboBox updateMarkTypeComboBox;
@@ -62,6 +67,9 @@ public class Lecturer {
     private JTextField stuMarksField;
     private JTable addStudentMarksTable;
     private JComboBox studentLevelComboBox;
+    private JButton uploadAssingmentButton;
+    private JComboBox lecWeekComboBox;
+
 
     private String stuid;
     private String marksValue;
@@ -396,6 +404,70 @@ public class Lecturer {
                 } catch (SQLException e) {
                     System.out.println("Statement error: " + e.getMessage());
                 }
+            }
+        });
+
+        uploadLecNoteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                int result = chooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File lecNote = chooser.getSelectedFile();
+                    String stuLevel = (String) stuLevelComboBox.getSelectedItem();
+                    String lecWeek = (String) lecWeekComboBox.getSelectedItem();
+
+                    if (!stuLevel.equals("") && !lecWeek.equals("")) {
+                        saveLecNote(lecNote,stuLevel,lecWeek);
+                    }else {
+                        JOptionPane.showMessageDialog(null, "Please select both level and week.");
+                    }
+                }
+            }
+
+            public void saveLecNote(File file, String stuLevel, String lecWeek){
+
+                File destination = new File("JavaProject/");
+                if(!destination.exists()){
+                    destination.mkdir();
+                }
+
+
+                try {
+                    String destinationPath = destination.getAbsolutePath() + "/" + file.getName();
+                    Files.copy(file.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
+
+                    DbConnector db = new DbConnector();
+                    conn = db.getConnection();
+
+                    String sql = "INSERT INTO lecture_material(level,week,file_name,file_path) VALUES (?,?,?,?)";
+                    try {
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, stuLevel);
+                        pstmt.setString(2, lecWeek);
+                        pstmt.setString(3, file.getName());
+                        pstmt.setString(4, destinationPath);
+                        int rows = pstmt.executeUpdate();
+                        if (rows > 0) {
+                            JOptionPane.showMessageDialog(null, "Lecture note uploaded successfully!");
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("Statement error: " + e.getMessage());
+                    }
+
+                } catch (IOException e) {
+                    System.out.println("File could not be copied" + e.getMessage());
+                }
+
+            }
+        });
+
+        uploadAssingmentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.showOpenDialog(null);
             }
         });
     }
