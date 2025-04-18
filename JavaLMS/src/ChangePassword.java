@@ -61,6 +61,12 @@ public class ChangePassword {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            if (!new_pass.equals(confirm_pass)) {
+                JOptionPane.showMessageDialog(null, "Passwords do not match!");
+            } else {
+                JOptionPane.showMessageDialog(null, "Password must be 8 to 16 characters and include at least one uppercase letter, lowercase letter, digit, and special character (@$!%*?&).");
+            }
         }
     }
 }

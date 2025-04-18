@@ -17,5 +17,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="ca.weblite.ktswing.jgoodies" level="project" />
+    <orderEntry type="library" name="io.github.lzh0379.jdatepicker" level="project" />
   </component>
 </module>

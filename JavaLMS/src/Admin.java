@@ -1,5 +1,15 @@
+import org.jdatepicker.JDatePicker;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class Admin {
 
@@ -14,14 +24,13 @@ public class Admin {
     private JPanel crtupanel;     // Create User panel
     private JPanel crtnpanel;     // Create Notice panel
     private JPanel cardContainer;
-    private JComboBox comboBox1;
-    private JComboBox comboBox7;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JTextField textField3;
-    private JTextField textField4;
-    private JTextField textField5;
-    private JTextField textField6;
+    private JComboBox crtusertype;
+    private JComboBox crtleveltype;
+    private JTextField emailbox2;
+    private JTextField pnobox2;
+    private JTextField lnamebox2;
+    private JTextField fnamebox2;
+    private JTextField unamebox2;
     private JButton ucreate_btn;
     private JButton uedit_btn;
     private JButton udelete_btn;
@@ -53,6 +62,21 @@ public class Admin {
     private JPanel ncreate_panel;
     private JButton ndelete_btn;
     private JButton ncreate_btn;
+    private JLabel crtlevellabel;
+    private JComboBox crtdeptype;
+    private JLabel crtdeplabel;
+    private JTextField unamebox1;
+    private JTextField emailbox1;
+    private JTextField fnamebox1;
+    private JTextField lnamebox1;
+    private JDatePicker dobbox1;
+    private JTextField pnobox1;
+    private JComboBox depbox1;
+    private JComboBox edtusertype;
+    private JComboBox edtleveltype;
+    private JLabel edtlevellabel;
+    private JLabel deplabel1;
+    private JDatePicker dobbox2;
     private JFrame frame;
 
     public String username;
@@ -137,6 +161,7 @@ public class Admin {
                     JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 frame.dispose();
+                LoginForm lf = new LoginForm();
             }
         });
 
@@ -144,5 +169,134 @@ public class Admin {
         // Show Create User panel by default
         cardLayout.show(cardContainer, "Card1");
         cardLayout.show(userformcard, "uCard1");
+
+        crtusertype.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showCreateUserNecassarry();
+            }
+        });
+
+        editButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createUser();
+            }
+        });
+    }
+
+    public void showCreateUserNecassarry() {
+        String userType = crtusertype.getSelectedItem().toString();
+        if (userType.equals("Lecturer") || userType.equals("Technical Officer") || userType.equals("Admin")) {
+            crtleveltype.setVisible(false);
+            crtlevellabel.setVisible(false);
+        } else {
+            crtleveltype.setVisible(true);
+            crtlevellabel.setVisible(true);
+        }
+
+        if (userType.equals("Admin")) {
+            crtdeptype.setVisible(false);
+            crtdeplabel.setVisible(false);
+        } else {
+            crtdeptype.setVisible(true);
+            crtdeplabel.setVisible(true);
+        }
+    }
+
+    public void showEditUserNecassarry() {
+        String userType = edtusertype.getSelectedItem().toString();
+        if (userType.equals("Lecturer") || userType.equals("Technical Officer") || userType.equals("Admin")) {
+            edtleveltype.setVisible(false);
+            edtlevellabel.setVisible(false);
+        } else {
+            edtleveltype.setVisible(true);
+            edtlevellabel.setVisible(true);
+        }
+
+        if (userType.equals("Admin")) {
+            depbox1.setVisible(false);
+            depbox1.setVisible(false);
+        } else {
+            depbox1.setVisible(true);
+            depbox1.setVisible(true);
+        }
+    }
+
+    public void createUser() {
+        String uname = unamebox2.getText();
+        String fname = fnamebox2.getText();
+        String lname = lnamebox2.getText();
+        String email = emailbox2.getText();
+        String pno = pnobox2.getText();
+        String regx = "^[A-Za-z0-9+_.-]+@(.+)$";
+        String userType = crtusertype.getSelectedItem().toString();
+        String level = edtleveltype.getSelectedItem().toString();
+        String dept = crtdeptype.getSelectedItem().toString();
+        Date dob = (Date) dobbox2.getModel().getValue();
+
+        if (dob == null || uname.isEmpty() || fname.isEmpty() || lname.isEmpty() || email.isEmpty() || pno.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Please fill all the fields!");
+            return;
+        }
+
+        if (uname.length() != 6) {
+            JOptionPane.showMessageDialog(frame, "Please enter valid username!");
+            return;
+        }
+
+        if (!email.matches(regx)) {
+            JOptionPane.showMessageDialog(frame, "Please enter valid email!");
+            return;
+        }
+
+        if (pno.length() != 10) {
+            JOptionPane.showMessageDialog(frame, "Please enter valid phone number!");
+            return;
+        }
+        LocalDate date = dob.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+
+
+        if (date.isAfter((LocalDate.now().minusYears(18)))) {
+            JOptionPane.showMessageDialog(frame, "Please enter valid date of birth!");
+            return;
+        }
+
+        if (userType.equals("Admin")) {
+            Connection conn = Database.DbConnector.getConnection();
+            if (conn == null) {return;}
+
+            String nextId = null;
+            String crt_adminiD_sql = "SELECT adminid FROM admin ORDER BY adminid DESC LIMIT 1";
+            try (PreparedStatement stmt = conn.prepareStatement(crt_adminiD_sql)) {
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    String lastId = rs.getString("adminid"); // e.g., "A001"
+                    // Extract numeric part and increment
+                    int num = Integer.parseInt(lastId.substring(3)); // "001" -> 1
+                    num++;
+                    nextId = String.format("A%03d", num); // e.g., "A002"
+                } else {
+                    nextId = "a001";
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            String admin_sql = "INSERT INTO admin (adminid, username, fname, lname, email, dob, pnumber) VALUES ( nextId, uname, fname, lname, email, dob , pno)";
+            try(PreparedStatement stmt = conn.prepareStatement(admin_sql)) {
+                ResultSet rs = stmt.executeQuery();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+
     }
 }
