@@ -1,6 +1,9 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
 
 public class TechOfficer {
     private JPanel MainPanel;
@@ -48,12 +51,12 @@ public class TechOfficer {
     private JButton atten_submitButton;
     private JTextField textField4;
     private JButton atten_deleteButton;
-    private JComboBox comboBox7;
-    private JComboBox comboBox8;
-    private JComboBox comboBox9;
-    private JTextField textField9;
-    private JTextField textField10;
-    private JTextField textField11;
+    private JComboBox aetype_combo;
+    private JComboBox aepre_combo;
+    private JComboBox ae_combo;
+    private JTextField aestu_text;
+    private JTextField aecour_text;
+    private JTextField aedate_text;
     private JButton aedit_button;
     private JPanel crtattenpanel;
     private JPanel vatten;
@@ -109,6 +112,14 @@ public class TechOfficer {
     private JButton deleteButton2;
     private JButton submitButton;
 
+    private String stuid;
+    private String course;
+    private String date;
+    private String des;
+    private String type;
+    private String pre;
+
+
     public TechOfficer() {
         JFrame frame = new JFrame("Add Attendance");
         frame.setContentPane(MainPanel);
@@ -156,18 +167,140 @@ public class TechOfficer {
 
         createMedicalTable();
 
+        loadAttendanceTable();
+
+
+
+
+
+
+        atten_submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addAttendance();
+            }
+        });
+
+        aedit_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
 
     }
 
+    private void clearAttendanceFields() {
+        attenstu_text.setText("");
+        attencour_text.setText("");
+        attendate_text.setText("");
+        atten_type_combo.setSelectedIndex(0);
+        atten_pre_combo.setSelectedIndex(0);
+    }
+
+
     private void createAttendanceTable() {
-        String[] columns = {"Student ID", "Course Code", "Date", "Type","Present", "Level"};
+        String[] columns = {"Student ID", "Course Code", "Date", "Type","Present"};
         Object[][] data = {}; // or populate from DB later
 
         DefaultTableModel model = new DefaultTableModel(data, columns);
         attenViewtable.setModel(model);
 
-
     }
+
+    private void addAttendance() {
+        stuid = attenstu_text.getText().trim();
+        course = attencour_text.getText().trim();
+        date = attendate_text.getText().trim();
+        type = (String) atten_type_combo.getSelectedItem();  // ctype
+        pre = (String) atten_pre_combo.getSelectedItem();    // "Present"/"Absent"
+
+        // Validate input
+        if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || type == null || pre == null) {
+            JOptionPane.showMessageDialog(null, "Please fill in all fields.");
+            return;
+        }
+
+        // Convert presence to TINYINT (1 = present, 0 = absent)
+        int present = pre.equalsIgnoreCase("Present") ? 1 : 0;
+
+        String sql = "INSERT INTO attendance (stuid, ccode, sdate, ctype, present, msubmit) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, stuid);
+            pstmt.setString(2, course);
+            pstmt.setDate(3, java.sql.Date.valueOf(date)); // Ensure date is in YYYY-MM-DD format
+            pstmt.setString(4, type);
+            pstmt.setInt(5, present);
+            pstmt.setInt(6, 0); // msubmit is initially 0 unless medical is submitted
+
+            pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+
+            JOptionPane.showMessageDialog(null, "Attendance added successfully!");
+            clearAttendanceFields();
+            createAttendanceTable(); // Refresh the table
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Failed to add attendance.");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid date format. Use YYYY-MM-DD.");
+        }
+    }
+
+
+
+    private void loadAttendanceTable() {
+        String sql = "SELECT a.stuid, a.ccode, a.sdate, a.ctype, " +
+                "CASE a.present WHEN 1 THEN 'Present' ELSE 'Absent' END AS status " +
+                "FROM attendance a " +
+                "JOIN student s ON a.stuid = s.stuid " +
+                "ORDER BY a.sdate DESC";
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            // You can use DefaultTableModel to populate JTable
+            DefaultTableModel model = (DefaultTableModel) attenViewtable.getModel();
+            model.setRowCount(0); // Clear existing data
+
+            while (rs.next()) {
+                String stuid = rs.getString("stuid");
+                String course = rs.getString("ccode");
+                String date = rs.getString("sdate");
+                String type = rs.getString("ctype");
+                String status = rs.getString("status");
+
+                model.addRow(new Object[]{stuid, course, date, type, status});
+            }
+
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error loading attendance data.");
+        }
+    }
+
+
+    
+
+
+
+
+
 
     private void createMedicalTable() {
         String[] medcol = {"Medical ID","Student ID","Course Code","Date", "Description"};
@@ -177,10 +310,20 @@ public class TechOfficer {
         med_table.setModel(model);
     }
 
+
+
+
     public static void main(String[] args) {
         new TechOfficer();
 
     }
+
+
+
+
+
+
+
 
 
 

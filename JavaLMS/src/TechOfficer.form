@@ -936,7 +936,12 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <model>
+                                <item value="Theory"/>
+                                <item value="Practical"/>
+                              </model>
+                            </properties>
                           </component>
                           <component id="87462" class="javax.swing.JComboBox" binding="atten_pre_combo">
                             <constraints>
@@ -944,7 +949,12 @@
                                 <preferred-size width="200" height="-1"/>
                               </grid>
                             </constraints>
-                            <properties/>
+                            <properties>
+                              <model>
+                                <item value="True"/>
+                                <item value="False"/>
+                              </model>
+                            </properties>
                           </component>
                           <component id="3cf13" class="javax.swing.JComboBox" binding="atten_level_combo">
                             <constraints>
@@ -1097,7 +1107,7 @@
                               <text value="Type"/>
                             </properties>
                           </component>
-                          <component id="43365" class="javax.swing.JComboBox" binding="comboBox7" default-binding="true">
+                          <component id="43365" class="javax.swing.JComboBox" binding="aetype_combo">
                             <constraints>
                               <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="200" height="-1"/>
@@ -1105,13 +1115,13 @@
                             </constraints>
                             <properties/>
                           </component>
-                          <component id="ba082" class="javax.swing.JComboBox" binding="comboBox8" default-binding="true">
+                          <component id="ba082" class="javax.swing.JComboBox" binding="aepre_combo">
                             <constraints>
                               <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties/>
                           </component>
-                          <component id="56f27" class="javax.swing.JComboBox" binding="comboBox9" default-binding="true">
+                          <component id="56f27" class="javax.swing.JComboBox" binding="ae_combo">
                             <constraints>
                               <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                             </constraints>
@@ -1162,7 +1172,7 @@
                               <text value="Date"/>
                             </properties>
                           </component>
-                          <component id="3ae5d" class="javax.swing.JTextField" binding="textField9" default-binding="true">
+                          <component id="3ae5d" class="javax.swing.JTextField" binding="aestu_text">
                             <constraints>
                               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
@@ -1170,7 +1180,7 @@
                             </constraints>
                             <properties/>
                           </component>
-                          <component id="3cd92" class="javax.swing.JTextField" binding="textField10" default-binding="true">
+                          <component id="3cd92" class="javax.swing.JTextField" binding="aecour_text">
                             <constraints>
                               <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
@@ -1178,7 +1188,7 @@
                             </constraints>
                             <properties/>
                           </component>
-                          <component id="11a46" class="javax.swing.JTextField" binding="textField11" default-binding="true">
+                          <component id="11a46" class="javax.swing.JTextField" binding="aedate_text">
                             <constraints>
                               <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
