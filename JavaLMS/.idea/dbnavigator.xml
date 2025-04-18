@@ -49,9 +49,7 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="4afda9da-883d-4cd0-86d0-74f60ed63b76" object-ref="schemas/javalms/tables/admin" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="4afda9da-883d-4cd0-86d0-74f60ed63b76" />

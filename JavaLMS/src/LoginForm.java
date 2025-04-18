@@ -75,29 +75,29 @@ public class LoginForm{
     }
 
     private void userLogin() {
-        username = textField1.getText();
+        username = textField1.getText().toUpperCase();
         String password = passwordField1.getText();
 
         if (username.equals("") && username.length() == 6) {
             JOptionPane.showMessageDialog(frame, "Please enter valid username!");
         }
-        String id_user = username.substring(0, 2).toLowerCase();
+        String id_user = username.substring(0, 2).toUpperCase();
         Connection conn = DbConnector.getConnection();
         if (conn == null) {return;}
 
         String table = null;
 
         switch (id_user) {
-            case "tg":
+            case "TG":
                 table = "student";
                 break;
-            case "lc":
+            case "LC":
                 table = "lecturer";
                 break;
-            case "to":
-                table = "teacher";
+            case "TO":
+                table = "technician";
                 break;
-            case "ad":
+            case "AD":
                 table = "admin";
                 break;
             default:

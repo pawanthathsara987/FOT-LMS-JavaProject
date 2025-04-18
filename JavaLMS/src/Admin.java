@@ -1,15 +1,11 @@
 import org.jdatepicker.JDatePicker;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Date;
+import java.sql.*;
 
 public class Admin {
 
@@ -77,9 +73,13 @@ public class Admin {
     private JLabel edtlevellabel;
     private JLabel deplabel1;
     private JDatePicker dobbox2;
+    private JTextField dltuname;
+    private JComboBox dltusertype;
     private JFrame frame;
 
     public String username;
+    public String nextId;
+    public String depid;
 
     public Admin(String username) {
         this.username = username;
@@ -169,28 +169,87 @@ public class Admin {
         // Show Create User panel by default
         cardLayout.show(cardContainer, "Card1");
         cardLayout.show(userformcard, "uCard1");
+        ucreate_btn.setBackground(Color.GREEN);
 
+        //when open admin form
+        showNextUsername();
+        showUserDetails();
+
+        //hide some field when user select
         crtusertype.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showCreateUserNecassarry();
+                showUserDetails();
             }
         });
 
-        editButton1.addActionListener(new ActionListener() {
+        //hide some field when user select
+        edtusertype.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                showEditUserNecassarry();
+                showUserDetails();
             }
         });
+
+        dltusertype.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showUserDetails();
+            }
+        });
+
+        //create user when user click submit button
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createUser();
             }
         });
+
+        editButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editUser();;
+            }
+        });
+
+        deleteButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteUser();
+            }
+        });
+
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == ucreate_btn) {
+                    ucreate_btn.setBackground(Color.GREEN);
+                    uedit_btn.setBackground(Color.WHITE);
+                    udelete_btn.setBackground(Color.WHITE);
+                    showUserDetails(); // Already present
+                } else if (e.getSource() == uedit_btn) {
+                    ucreate_btn.setBackground(Color.WHITE);
+                    uedit_btn.setBackground(Color.GREEN);
+                    udelete_btn.setBackground(Color.WHITE);
+                    showUserDetails(); // Already present
+                } else if (e.getSource() == udelete_btn) {
+                    ucreate_btn.setBackground(Color.WHITE);
+                    uedit_btn.setBackground(Color.WHITE);
+                    udelete_btn.setBackground(Color.GREEN);
+                    showUserDetails(); // Already present
+                }
+            }
+        };
+
+        ucreate_btn.addActionListener(listener);
+        uedit_btn.addActionListener(listener);
+        udelete_btn.addActionListener(listener);
     }
 
+    //hide some field when user select------------------------------------------------------------------------
     public void showCreateUserNecassarry() {
         String userType = crtusertype.getSelectedItem().toString();
         if (userType.equals("Lecturer") || userType.equals("Technical Officer") || userType.equals("Admin")) {
@@ -208,8 +267,11 @@ public class Admin {
             crtdeptype.setVisible(true);
             crtdeplabel.setVisible(true);
         }
+
+        showNextUsername();
     }
 
+    //hide some field when user select--------------------------------------------------------------------
     public void showEditUserNecassarry() {
         String userType = edtusertype.getSelectedItem().toString();
         if (userType.equals("Lecturer") || userType.equals("Technical Officer") || userType.equals("Admin")) {
@@ -222,13 +284,147 @@ public class Admin {
 
         if (userType.equals("Admin")) {
             depbox1.setVisible(false);
-            depbox1.setVisible(false);
+            deplabel1.setVisible(false);
         } else {
             depbox1.setVisible(true);
-            depbox1.setVisible(true);
+            deplabel1.setVisible(true);
         }
     }
 
+
+    //generate next username and id for user----------------------------------------------------------
+    public void showNextUsername() {
+        String userType = crtusertype.getSelectedItem().toString();
+
+        //check database connection
+        Connection conn = Database.DbConnector.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
+            return;
+        }
+
+        if (userType.equals("Admin")) {
+            String crt_adminId_sql = "SELECT adminid FROM admin ORDER BY adminid DESC LIMIT 1";
+            try (PreparedStatement stmt = conn.prepareStatement(crt_adminId_sql)) {
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    String lastId = rs.getString("adminid"); // e.g., "A001"
+                    int num = Integer.parseInt(lastId.substring(1)); // Extract numeric part
+                    num++;
+                    nextId = String.format("A%04d", num); // Create new ID
+                    unamebox2.setText(String.format("AD%04d", num));
+                } else {
+                    nextId = "A0001"; // First ID if database is empty
+                    unamebox2.setText("AD0001");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Error fetching admin ID: " + e.getMessage(), e);
+            }
+        } else if (userType.equals("Lecturer")) {
+            String crt_lecid_sql = "SELECT lecid FROM lecturer ORDER BY lecid DESC LIMIT 1";
+            try (PreparedStatement stmt = conn.prepareStatement(crt_lecid_sql)) {
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    String lastId = rs.getString("lecid");
+                    int num = Integer.parseInt(lastId.substring(1));
+                    num++;
+                    nextId = String.format("L%04d", num); // Create new ID
+                    unamebox2.setText(String.format("LC%04d", num));
+                } else {
+                    nextId = "L0001"; // First ID if database is empty
+                    unamebox2.setText("LC0001");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Error fetching lecturer ID: " + e.getMessage(), e);
+            }
+
+        } else if (userType.equals("Student")) {
+            String crt_stuid_sql = "SELECT stuid FROM student ORDER BY stuid DESC LIMIT 1";
+            try (PreparedStatement stmt = conn.prepareStatement(crt_stuid_sql)) {
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    String lastId = rs.getString("stuid");
+                    int num = Integer.parseInt(lastId.substring(1));
+                    num++;
+                    nextId = String.format("S%04d", num); // Create new ID
+                    unamebox2.setText(String.format("TG%04d", num));
+                } else {
+                    nextId = "S0001"; // First ID if database is empty
+                    unamebox2.setText("TG0001");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Error fetching student ID: " + e.getMessage(), e);
+            }
+
+        } else if (userType.equals("Technical Officer")) {
+            String crt_techId_sql = "SELECT techid FROM technician ORDER BY techid DESC LIMIT 1";
+            try (PreparedStatement stmt = conn.prepareStatement(crt_techId_sql)) {
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    String lastId = rs.getString("techid");
+                    int num = Integer.parseInt(lastId.substring(1));
+                    num++;
+                    nextId = String.format("T%04d", num); // Create new ID
+                    unamebox2.setText(String.format("TO%04d", num));
+                } else {
+                    nextId = "T0001"; // First ID if database is empty
+                    unamebox2.setText("TO0001");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Error fetching Technical Officer ID: " + e.getMessage(), e);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(frame, "Invalid user type!");
+            return;
+        }
+    }
+
+    //set all field to null---------------------------------------------------------------------------------------
+    public void setFieldToNull() {
+        if (ucreate_panel.isVisible()) {
+            fnamebox2.setText(null);
+            lnamebox2.setText(null);
+            emailbox2.setText(null);
+            pnobox2.setText(null);
+            dobbox2.getModel().setSelected(false);
+        } else if (edit_panel.isVisible()) {
+            unamebox1.setText(null);
+            fnamebox1.setText(null);
+            lnamebox1.setText(null);
+            emailbox1.setText(null);
+            pnobox1.setText(null);
+            dobbox1.getModel().setSelected(false);
+        } else if (delete_panel.isVisible()) {
+            dltuname.setText(null);
+        }
+    }
+
+    //select department id----------------------------------------------------------------------------------------
+    public void selectDepartment() {
+        String dep = null;
+        if (ucreate_panel.isVisible()) {
+            dep = crtdeptype.getSelectedItem().toString();
+        } else if (edit_panel.isVisible()) {
+            dep = depbox1.getSelectedItem().toString();
+        }
+        switch (dep) {
+            case "ICT":
+                depid = "D001";
+                break;
+            case "ET":
+                depid = "D002";
+                break;
+            case "BST":
+                depid = "D003";
+                break;
+            default:
+                JOptionPane.showMessageDialog(frame, "Invalid department!");
+
+        }
+    }
+
+    //user create method---------------------------------------------------------------------------
     public void createUser() {
         String uname = unamebox2.getText();
         String fname = fnamebox2.getText();
@@ -237,66 +433,406 @@ public class Admin {
         String pno = pnobox2.getText();
         String regx = "^[A-Za-z0-9+_.-]+@(.+)$";
         String userType = crtusertype.getSelectedItem().toString();
-        String level = edtleveltype.getSelectedItem().toString();
-        String dept = crtdeptype.getSelectedItem().toString();
-        Date dob = (Date) dobbox2.getModel().getValue();
 
+        // Ensure dobbox2 is not null and fetch the selected date
+        java.util.Date selectedDate = null;
+        if (dobbox2 != null && dobbox2.getModel().getValue() != null) {
+            selectedDate = ((java.util.GregorianCalendar) dobbox2.getModel().getValue()).getTime();
+        }
+        String dob = null;
+
+        // Convert selectedDate to SQL-compatible format if not null
+        if (selectedDate != null) {
+            java.time.LocalDate localDate = selectedDate.toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDate();
+            dob = localDate.toString(); // Format as yyyy-MM-dd
+        }
+
+        // Validate required fields
         if (dob == null || uname.isEmpty() || fname.isEmpty() || lname.isEmpty() || email.isEmpty() || pno.isEmpty()) {
             JOptionPane.showMessageDialog(frame, "Please fill all the fields!");
             return;
         }
 
+        // Validate username, email, and phone number
         if (uname.length() != 6) {
-            JOptionPane.showMessageDialog(frame, "Please enter valid username!");
+            JOptionPane.showMessageDialog(frame, "Please enter a valid username!");
             return;
         }
-
         if (!email.matches(regx)) {
-            JOptionPane.showMessageDialog(frame, "Please enter valid email!");
+            JOptionPane.showMessageDialog(frame, "Please enter a valid email!");
             return;
         }
-
         if (pno.length() != 10) {
-            JOptionPane.showMessageDialog(frame, "Please enter valid phone number!");
+            JOptionPane.showMessageDialog(frame, "Please enter a valid phone number!");
             return;
         }
-        LocalDate date = dob.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
-
-
-        if (date.isAfter((LocalDate.now().minusYears(18)))) {
-            JOptionPane.showMessageDialog(frame, "Please enter valid date of birth!");
+        //check database connection
+        Connection conn = Database.DbConnector.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
             return;
         }
 
         if (userType.equals("Admin")) {
-            Connection conn = Database.DbConnector.getConnection();
-            if (conn == null) {return;}
+            // Insert the admin details
+            String admin_sql = "INSERT INTO admin (adminid, username, fname, lname, email, dob, pnumber) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(admin_sql)) {
+                stmt.setString(1, nextId);
+                stmt.setString(2, uname);
+                stmt.setString(3, fname);
+                stmt.setString(4, lname);
+                stmt.setString(5, email);
+                stmt.setString(6, dob); // Properly formatted date
+                stmt.setString(7, pno);
 
-            String nextId = null;
-            String crt_adminiD_sql = "SELECT adminid FROM admin ORDER BY adminid DESC LIMIT 1";
-            try (PreparedStatement stmt = conn.prepareStatement(crt_adminiD_sql)) {
-                ResultSet rs = stmt.executeQuery();
-                if (rs.next()) {
-                    String lastId = rs.getString("adminid"); // e.g., "A001"
-                    // Extract numeric part and increment
-                    int num = Integer.parseInt(lastId.substring(3)); // "001" -> 1
-                    num++;
-                    nextId = String.format("A%03d", num); // e.g., "A002"
-                } else {
-                    nextId = "a001";
-                }
+                stmt.executeUpdate(); // Execute the INSERT query
+                JOptionPane.showMessageDialog(frame, "Admin created successfully!");
+                setFieldToNull();
+                showNextUsername();
+                showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Error inserting admin: " + e.getMessage(), e);
             }
-            String admin_sql = "INSERT INTO admin (adminid, username, fname, lname, email, dob, pnumber) VALUES ( nextId, uname, fname, lname, email, dob , pno)";
-            try(PreparedStatement stmt = conn.prepareStatement(admin_sql)) {
-                ResultSet rs = stmt.executeQuery();
+        } else if (userType.equals("Lecturer")) {
+
+            selectDepartment();
+            // Insert the lecturer details
+            String lecturer_sql = "INSERT INTO lecturer (lecid, username, fname, lname, email, dob, pnumber, depid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(lecturer_sql)) {
+                stmt.setString(1, nextId);
+                stmt.setString(2, uname);
+                stmt.setString(3, fname);
+                stmt.setString(4, lname);
+                stmt.setString(5, email);
+                stmt.setString(6, dob); // Properly formatted date
+                stmt.setString(7, pno);
+                stmt.setString(8, depid);
+
+                stmt.executeUpdate(); // Execute the INSERT query
+                JOptionPane.showMessageDialog(frame, "Lecturer created successfully!");
+                setFieldToNull();
+                showNextUsername();
+                showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Error inserting Lecturer: " + e.getMessage(), e);
             }
+
+        } else if (userType.equals("Student")) {
+
+            selectDepartment();
+            // Insert the admin details
+            String student_sql = "INSERT INTO student (stuid, username, fname, lname, email, dob, pnumber, stulevel, depid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(student_sql)) {
+                stmt.setString(1, nextId);
+                stmt.setString(2, uname);
+                stmt.setString(3, fname);
+                stmt.setString(4, lname);
+                stmt.setString(5, email);
+                stmt.setString(6, dob); // Properly formatted date
+                stmt.setString(7, pno);
+                stmt.setString(8, crtleveltype.getSelectedItem().toString());
+                stmt.setString(9, depid);
+
+                stmt.executeUpdate(); // Execute the INSERT query
+                JOptionPane.showMessageDialog(frame, "Student created successfully!");
+                setFieldToNull();
+                showNextUsername();
+                showUserDetails();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error inserting Student: " + e.getMessage(), e);
+            }
+
+        }else if (userType.equals("Technical Officer")) {
+
+            selectDepartment();
+            // Insert the admin details
+            String technician_sql = "INSERT INTO technician (techid, username, fname, lname, email, dob, pnumber, depid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(technician_sql)) {
+                stmt.setString(1, nextId);
+                stmt.setString(2, uname);
+                stmt.setString(3, fname);
+                stmt.setString(4, lname);
+                stmt.setString(5, email);
+                stmt.setString(6, dob); // Properly formatted date
+                stmt.setString(7, pno);
+                stmt.setString(8, depid);
+
+                stmt.executeUpdate(); // Execute the INSERT query
+                JOptionPane.showMessageDialog(frame, "Technical Officer created successfully!");
+                setFieldToNull();
+                showNextUsername();
+                showUserDetails();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error inserting Technical Officer: " + e.getMessage(), e);
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Invalid user type!");
+            return;
+        }
+    }
+
+    //edit user when click edit button----------------------------------------------------------------------------------
+    public void editUser() {
+        String uname = unamebox1.getText().toUpperCase();
+        String fname = fnamebox1.getText();
+        String lname = lnamebox1.getText();
+        String email = emailbox1.getText();
+        String pno = pnobox1.getText();
+        String regx = "^[A-Za-z0-9+_.-]+@(.+)$";
+        String userType = edtusertype.getSelectedItem().toString();
+
+        java.util.Date selectedDate = null;
+        if (dobbox1 != null && dobbox1.getModel().getValue() != null) {
+            selectedDate = ((java.util.GregorianCalendar) dobbox1.getModel().getValue()).getTime();
+        }
+        String dob = null;
+
+        // Convert selectedDate to SQL-compatible format if not null
+        if (selectedDate != null) {
+            java.time.LocalDate localDate = selectedDate.toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDate();
+            dob = localDate.toString(); // Format as yyyy-MM-dd
         }
 
+        // Validate required fields
+        if (dob == null || uname.isEmpty() || fname.isEmpty() || lname.isEmpty() || email.isEmpty() || pno.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Please fill all the fields!");
+            return;
+        }
+
+        // Validate username, email, and phone number
+        if (uname.length() != 6) {
+            JOptionPane.showMessageDialog(frame, "Please enter a valid username!");
+            return;
+        }
+        if (!email.matches(regx)) {
+            JOptionPane.showMessageDialog(frame, "Please enter a valid email!");
+            return;
+        }
+        if (pno.length() != 10) {
+            JOptionPane.showMessageDialog(frame, "Please enter a valid phone number!");
+            return;
+        }
+        //check database connection
+        Connection conn = Database.DbConnector.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
+            return;
+        }
+
+        if (userType.equals("Admin")) {
+            // Insert the admin details
+            String admin_sql = "UPDATE admin SET fname = ?, lname = ?, email = ?, dob = ?, pnumber = ? WHERE username = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(admin_sql)) {
+                stmt.setString(1, fname);
+                stmt.setString(2, lname);
+                stmt.setString(3, email);
+                stmt.setString(4, dob);
+                stmt.setString(5, pno);
+                stmt.setString(6, uname);
+
+                stmt.executeUpdate(); // Execute the INSERT query
+                JOptionPane.showMessageDialog(frame, "Admin updated successfully!");
+                setFieldToNull();
+                showUserDetails();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error updating admin: " + e.getMessage(), e);
+            }
+        } else if (userType.equals("Lecturer")) {
+
+            selectDepartment();
+            // Insert the lecturer details
+            String lecturer_sql = "UPDATE lecturer SET fname = ?, lname = ?, email = ?, dob = ?, pnumber = ?, depid = ? WHERE username = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(lecturer_sql)) {
+                stmt.setString(1, fname);
+                stmt.setString(2, lname);
+                stmt.setString(3, email);
+                stmt.setString(4, dob);
+                stmt.setString(5, pno);
+                stmt.setString(6, depid);
+                stmt.setString(7, uname);
 
 
+                stmt.executeUpdate(); // Execute the INSERT query
+                JOptionPane.showMessageDialog(frame, "Lecturer updated successfully!");
+                setFieldToNull();
+                showUserDetails();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error updating Lecturer: " + e.getMessage(), e);
+            }
+
+        } else if (userType.equals("Student")) {
+
+            selectDepartment();
+            // Insert the admin details
+            String student_sql = "UPDATE student SET fname = ?, lname = ?, email = ?, dob = ?, pnumber = ?, stulevel = ?, depid = ? WHERE username = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(student_sql)) {
+                stmt.setString(1, fname);
+                stmt.setString(2, lname);
+                stmt.setString(3, email);
+                stmt.setString(4, dob);
+                stmt.setString(5, pno);
+                stmt.setString(6, edtleveltype.getSelectedItem().toString());
+                stmt.setString(7, depid);
+                stmt.setString(8, uname);
+
+
+                stmt.executeUpdate(); // Execute the INSERT query
+                JOptionPane.showMessageDialog(frame, "Student updated successfully!");
+                setFieldToNull();
+                showUserDetails();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error updating Student: " + e.getMessage(), e);
+            }
+
+        }else if (userType.equals("Technical Officer")) {
+
+            selectDepartment();
+            // Insert the admin details
+            String technician_sql = "UPDATE technician SET fname = ?, lname = ?, email = ?, dob = ?, pnumber = ?, depid = ? WHERE username = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(technician_sql)) {
+                stmt.setString(1, fname);
+                stmt.setString(2, lname);
+                stmt.setString(3, email);
+                stmt.setString(4, dob);
+                stmt.setString(5, pno);
+                stmt.setString(6, depid);
+                stmt.setString(7, uname);
+
+                stmt.executeUpdate(); // Execute the INSERT query
+                JOptionPane.showMessageDialog(frame, "Technical Officer updated successfully!");
+                setFieldToNull();
+                showUserDetails();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error updating Technical Officer: " + e.getMessage(), e);
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Invalid user type!");
+            return;
+        }
+    }
+
+    public void deleteUser() {
+        String uname = dltuname.getText().toUpperCase();
+        String usertype = dltusertype.getSelectedItem().toString().toLowerCase();
+        System.out.println(uname + " " + usertype);
+        if (usertype.equals("Technical Officer")) {
+            usertype = "technician";
+        }
+
+        Connection conn = Database.DbConnector.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
+            return;
+        }
+        String table = null;
+        String id_user = uname.substring(0, 2);
+
+        switch (id_user) {
+            case "TG":
+                table = "student";
+                break;
+            case "LC":
+                table = "lecturer";
+                break;
+            case "TO":
+                table = "technician";
+                break;
+            case "AD":
+                table = "admin";
+                break;
+            default:
+                JOptionPane.showMessageDialog(frame, "Please enter valid username!");
+                return;
+        }
+
+        if (usertype.equals(table)) {
+            String delete_sql = "DELETE FROM " + table + " WHERE username = ?";
+
+            try(PreparedStatement stmt = conn.prepareStatement(delete_sql)) {
+                stmt.setString(1, uname);
+                stmt.executeUpdate();
+                JOptionPane.showMessageDialog(frame, "User deleted successfully!");
+                setFieldToNull();
+                showUserDetails();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error deleting user: " + e.getMessage(), e);
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please enter valid username!");
+            return;
+        }
+
+    }
+
+    public void showUserDetails() {
+        String usertype = null;
+        Connection conn = Database.DbConnector.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
+            return;
+        }
+
+        if (ucreate_btn.getBackground() == Color.GREEN) {
+            usertype = crtusertype.getSelectedItem().toString().toLowerCase();
+        } else if (uedit_btn.getBackground() == Color.GREEN) {
+            usertype = edtusertype.getSelectedItem().toString().toLowerCase();
+        }else if (udelete_btn.getBackground() == Color.GREEN) {
+            usertype = dltusertype.getSelectedItem().toString().toLowerCase();
+        } else {
+            JOptionPane.showMessageDialog(frame, "Please select a user to view details!");
+            return;
+        }
+
+        if (usertype.equals("technical officer")) {
+            usertype = "technician";
+        }
+
+        String showUser_sql;
+        switch (usertype) {
+            case "admin":
+                showUser_sql = "SELECT adminid, username, fname, lname, email, dob, pnumber FROM admin";
+                break;
+            case "lecturer":
+                showUser_sql = "SELECT lecid, username, fname, lname, email, dob, pnumber, depid FROM lecturer";
+                break;
+            case "student":
+                showUser_sql = "SELECT stuid, username, fname, lname, email, dob, pnumber, stulevel, depid FROM student";
+                break;
+            case "technician":
+                showUser_sql = "SELECT techid, username, fname, lname, email, dob, pnumber, depid FROM technician";
+                break;
+            default:
+                JOptionPane.showMessageDialog(frame, "Invalid user type!");
+                return;
+        }
+
+        try(PreparedStatement stmt = conn.prepareStatement(showUser_sql)) {
+            ResultSet rs = stmt.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            DefaultTableModel model = (DefaultTableModel) userinfo.getModel();
+
+            model.setRowCount(0);
+
+            int columnsNumber = rsmd.getColumnCount();
+            String[] columnNames = new String[columnsNumber];
+            for (int i = 0; i < columnsNumber; i++) {
+                columnNames[i] = rsmd.getColumnName(i + 1);
+            }
+            model.setColumnIdentifiers(columnNames);
+
+            while (rs.next()) {
+                Object[] rowData = new Object[columnsNumber];
+                for (int i = 0; i < columnsNumber; i++) {
+                    rowData[i] = rs.getObject(i + 1);
+                }
+                model.addRow(rowData);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error showing user details: " + e.getMessage(), e);
+        }
     }
 }
