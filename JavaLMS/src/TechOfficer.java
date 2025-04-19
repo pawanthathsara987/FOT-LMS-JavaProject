@@ -111,6 +111,8 @@ public class TechOfficer {
     private JTextField textField1;
     private JButton deleteButton2;
     private JButton submitButton;
+    private JButton aeselect;
+    private JButton attenselect;
 
     private String stuid;
     private String course;
@@ -174,20 +176,40 @@ public class TechOfficer {
 
 
 
+
+
+
         atten_submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addAttendance();
+                loadAttendanceTable();
             }
         });
 
         aedit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+               editAttendance();
             }
         });
 
+
+
+
+        aeselect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = attenViewtable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    aestu_text.setText(attenViewtable.getValueAt(selectedRow, 0).toString());
+                    aecour_text.setText(attenViewtable.getValueAt(selectedRow, 1).toString());
+                    aedate_text.setText(attenViewtable.getValueAt(selectedRow, 2).toString());
+                    aetype_combo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 3).toString());
+                    aepre_combo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 4).toString());
+                }
+            }
+        });
     }
 
     private void clearAttendanceFields() {
@@ -295,7 +317,62 @@ public class TechOfficer {
     }
 
 
-    
+
+
+
+    // Edit Button Action (Save changes)
+    private void editAttendance() {
+        String stuId = aestu_text.getText().trim();
+        String course = aecour_text.getText().trim();
+        String date = aedate_text.getText().trim();
+        String type = (String) aetype_combo.getSelectedItem();
+        String present = (String) aepre_combo.getSelectedItem();
+
+        // Validate input
+        if (stuId.isEmpty() || course.isEmpty() || date.isEmpty() || type == null || present == null) {
+            JOptionPane.showMessageDialog(null, "Please fill in all fields.");
+            return;
+        }
+
+        int presentValue = present.equalsIgnoreCase("Present") ? 1 : 0;
+
+        // Prepare the update query
+        String sql = "UPDATE attendance SET ctype = ?, present = ? WHERE stuid = ? AND ccode = ? AND sdate = ?";
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, type);
+            pstmt.setInt(2, presentValue);
+            pstmt.setString(3, stuId);
+            pstmt.setString(4, course);
+            pstmt.setDate(5, java.sql.Date.valueOf(date));
+
+            int updated = pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+
+            if (updated > 0) {
+                JOptionPane.showMessageDialog(null, "Attendance updated successfully!");
+                loadAttendanceTable(); // Refresh the table
+            } else {
+                JOptionPane.showMessageDialog(null, "Update failed. Record not found.");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error occurred.");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid date format. Use YYYY-MM-DD.");
+        }
+
+
+}
+
+
+
 
 
 
