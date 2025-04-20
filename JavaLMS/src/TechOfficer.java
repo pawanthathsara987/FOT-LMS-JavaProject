@@ -86,19 +86,15 @@ public class TechOfficer {
     private JTable med_table;
     private JTextField medtextstu;
     private JTextField medtextcourse;
-    private JComboBox med_comboBox1;
-    private JComboBox med_comboBox2;
     private JPanel medtitlepanel;
     private JPanel medvtable;
     private JButton med_editButton;
     private JButton med_deleteButton;
     private JButton med_createButton;
     private JPanel med_button;
-    private JTextField textField3;
-    private JTextField textField5;
-    private JComboBox comboBox4;
-    private JComboBox comboBox6;
-    private JButton editButton1;
+    private JTextField Emedstu;
+    private JTextField Emedcour;
+    private JButton mededit;
     private JLabel medstu;
     private JLabel medcourse;
     private JLabel meddate;
@@ -110,8 +106,13 @@ public class TechOfficer {
     private JLabel medtitlelabel;
     private JTextField textField1;
     private JButton deleteButton2;
-    private JButton submitButton;
+    private JButton medsubmit;
     private JButton aeselect;
+    private JTextField medtextdate;
+    private JTextArea medtextdes;
+    private JButton medselect;
+    private JTextField Emeddate;
+    private JTextField Emeddes;
     private JButton attenselect;
 
     private String stuid;
@@ -171,13 +172,7 @@ public class TechOfficer {
 
         loadAttendanceTable();
 
-
-
-
-
-
-
-
+        loadMedicalTable();
 
         atten_submitButton.addActionListener(new ActionListener() {
             @Override
@@ -210,7 +205,41 @@ public class TechOfficer {
                 }
             }
         });
+
+
+
+        medsubmit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addMedical();
+                loadMedicalTable();
+            }
+        });
+
+
+        medselect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = med_table.getSelectedRow();
+                if (selectedRow >= 0) {
+
+                    Emedstu.setText(med_table.getValueAt(selectedRow, 1).toString());
+                    Emedcour.setText(med_table.getValueAt(selectedRow, 2).toString());
+                    Emeddate.setText(med_table.getValueAt(selectedRow, 3).toString());
+                    Emeddes.setText(med_table.getValueAt(selectedRow, 4).toString());
+
+                }
+            }
+        });
+        mededit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editMedical();
+            }
+        });
     }
+
+    //Attendance add,edit,delete,view
 
     private void clearAttendanceFields() {
         attenstu_text.setText("");
@@ -371,9 +400,143 @@ public class TechOfficer {
 
 }
 
+    private void clearMedicalFields() {
+        medtextstu.setText("");
+        medtextcourse.setText("");
+        medtextdate.setText("");
+        medtextdes.setText("");
+
+    }
 
 
+//Medical add,edit,delete
+private void addMedical() {
+    stuid = medtextstu.getText().trim();
+    course = medtextcourse.getText().trim();
+    date = medtextdate.getText().trim();
+    des = medtextdes.getText();
 
+
+    // Validate input
+    if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || des == null ) {
+        JOptionPane.showMessageDialog(null, "Please fill in all fields.");
+        return;
+    }
+
+
+    String sql = "INSERT INTO medical (stuid, ccode, mdate, mdescription) VALUES (?, ?, ?, ?)";
+
+    try {
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+        pstmt.setString(1, stuid);
+        pstmt.setString(2, course);
+        pstmt.setDate(3, java.sql.Date.valueOf(date)); // Ensure date is in YYYY-MM-DD format
+        pstmt.setString(4, des);
+
+         // msubmit is initially 0 unless medical is submitted
+
+        pstmt.executeUpdate();
+
+        pstmt.close();
+        conn.close();
+
+        JOptionPane.showMessageDialog(null, "Medical added successfully!");
+        clearMedicalFields();
+        createMedicalTable();// Refresh the table
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Failed to add medical.");
+    } catch (IllegalArgumentException ex) {
+        JOptionPane.showMessageDialog(null, "Invalid date format. Use YYYY-MM-DD.");
+    }
+}
+
+
+    private void loadMedicalTable() {
+        String sql = "SELECT m.medid, m.stuid, m.ccode, m.mdate, m.mdescription " +
+                "FROM medical m " +
+                "JOIN student s ON m.stuid = s.stuid " +
+                "ORDER BY m.mdate DESC";
+
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            // You can use DefaultTableModel to populate JTable
+            DefaultTableModel model = (DefaultTableModel) med_table.getModel();
+            model.setRowCount(0); // Clear existing data
+
+            while (rs.next()) {
+                int med = rs.getInt("medid");
+                String stuid = rs.getString("stuid");
+                String course = rs.getString("ccode");
+                String date = rs.getString("mdate");
+                String des = rs.getString("mdescription");
+
+
+                model.addRow(new Object[]{med,stuid, course, date, des});
+            }
+
+            rs.close();
+            stmt.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error loading attendance data.");
+        }
+    }
+
+
+    private void editMedical() {
+        String stuId = Emedstu.getText().trim();
+        String course = Emedcour.getText().trim();
+        String date = Emeddate.getText().trim();
+        String description = Emeddes.getText().trim();
+
+        // Validate input
+        if (stuId.isEmpty() || course.isEmpty() || date.isEmpty() || description.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please fill in all fields.");
+            return;
+        }
+
+        String sql = "UPDATE medical SET mdescription = ?  WHERE stuid = ? AND ccode = ? AND mdate = ?";
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, description);
+            pstmt.setString(2, stuId);
+            pstmt.setString(3, course);
+            pstmt.setDate(4, java.sql.Date.valueOf(date));
+
+            int updated = pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+
+            if (updated > 0) {
+                JOptionPane.showMessageDialog(null, "Medical record updated successfully!");
+                loadMedicalTable(); // Refresh the table
+            } else {
+                JOptionPane.showMessageDialog(null, "Update failed. Record not found.");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error occurred.");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid date format. Use YYYY-MM-DD.");
+        }
+    }
 
 
 

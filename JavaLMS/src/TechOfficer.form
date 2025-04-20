@@ -337,22 +337,6 @@
                               <text value="Description"/>
                             </properties>
                           </component>
-                          <component id="4014c" class="javax.swing.JComboBox" binding="med_comboBox1">
-                            <constraints>
-                              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                                <preferred-size width="200" height="-1"/>
-                              </grid>
-                            </constraints>
-                            <properties/>
-                          </component>
-                          <component id="5b82b" class="javax.swing.JComboBox" binding="med_comboBox2">
-                            <constraints>
-                              <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                                <preferred-size width="200" height="-1"/>
-                              </grid>
-                            </constraints>
-                            <properties/>
-                          </component>
                           <hspacer id="f3d6c">
                             <constraints>
                               <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -371,7 +355,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="c133d" class="javax.swing.JButton" binding="submitButton" default-binding="true">
+                              <component id="c133d" class="javax.swing.JButton" binding="medsubmit">
                                 <constraints>
                                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                                 </constraints>
@@ -391,6 +375,22 @@
                               <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                             </constraints>
                           </vspacer>
+                          <component id="c555e" class="javax.swing.JTextField" binding="medtextdate">
+                            <constraints>
+                              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="7ae00" class="javax.swing.JTextArea" binding="medtextdes">
+                            <constraints>
+                              <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="50"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
                         </children>
                       </grid>
                       <grid id="587a5" binding="med_edit" layout-manager="GridLayoutManager" row-count="5" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -427,7 +427,7 @@
                               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                             </constraints>
                           </vspacer>
-                          <component id="c5313" class="javax.swing.JTextField" binding="textField3" default-binding="true">
+                          <component id="c5313" class="javax.swing.JTextField" binding="Emedstu">
                             <constraints>
                               <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
@@ -435,7 +435,7 @@
                             </constraints>
                             <properties/>
                           </component>
-                          <component id="8023b" class="javax.swing.JTextField" binding="textField5" default-binding="true">
+                          <component id="8023b" class="javax.swing.JTextField" binding="Emedcour">
                             <constraints>
                               <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                                 <preferred-size width="150" height="-1"/>
@@ -461,14 +461,6 @@
                               <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                             </constraints>
                           </hspacer>
-                          <component id="8bebf" class="javax.swing.JComboBox" binding="comboBox4" default-binding="true">
-                            <constraints>
-                              <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                                <preferred-size width="200" height="-1"/>
-                              </grid>
-                            </constraints>
-                            <properties/>
-                          </component>
                           <hspacer id="aed3f">
                             <constraints>
                               <grid row="1" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -486,14 +478,6 @@
                             <properties>
                               <text value="Description"/>
                             </properties>
-                          </component>
-                          <component id="5ec1a" class="javax.swing.JComboBox" binding="comboBox6" default-binding="true">
-                            <constraints>
-                              <grid row="3" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                                <preferred-size width="200" height="-1"/>
-                              </grid>
-                            </constraints>
-                            <properties/>
                           </component>
                           <vspacer id="24111">
                             <constraints>
@@ -514,14 +498,36 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="df09f" class="javax.swing.JButton" binding="editButton1" default-binding="true">
+                              <component id="df09f" class="javax.swing.JButton" binding="mededit">
                                 <constraints/>
                                 <properties>
                                   <text value="Edit"/>
                                 </properties>
                               </component>
+                              <component id="41f57" class="javax.swing.JButton" binding="medselect">
+                                <constraints/>
+                                <properties>
+                                  <text value="Select"/>
+                                </properties>
+                              </component>
                             </children>
                           </grid>
+                          <component id="51d66" class="javax.swing.JTextField" binding="Emeddate">
+                            <constraints>
+                              <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="ec06f" class="javax.swing.JTextField" binding="Emeddes">
+                            <constraints>
+                              <grid row="3" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
                         </children>
                       </grid>
                     </children>
