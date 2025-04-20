@@ -69,6 +69,10 @@ public class Lecturer {
     private JComboBox studentLevelComboBox;
     private JButton uploadAssingmentButton;
     private JComboBox lecWeekComboBox;
+    private JPanel viewGradesAndGPA;
+    private JButton viewGradesAndGPAButton;
+    private JButton VIEWButton;
+    private JLabel lecNameLabel;
 
 
     private String stuid;
@@ -78,6 +82,8 @@ public class Lecturer {
     private String stuid2;
     private String marksValue2;
     private String markType2;
+    private String lecUsername;
+    private String depid;
 
     private int stuLevel;
 
@@ -85,13 +91,18 @@ public class Lecturer {
     private Statement stmt = null;
 
     public Lecturer() {
-
         JFrame frame = new JFrame("Lecturer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setContentPane(MainPanel);
         frame.setSize(1400,750);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+    }
+    public Lecturer(String lecUsername, String lecName) {
+
+        this();
+        lecNameLabel.setText(lecName);
+        this.lecUsername = lecUsername;
 
         addLectureMaterialButton.addActionListener(new ActionListener() {
             @Override
@@ -148,6 +159,16 @@ public class Lecturer {
             public void actionPerformed(ActionEvent e) {
                 parentPanel.removeAll();
                 parentPanel.add(viewStudentDetailsPanel);
+                parentPanel.repaint();
+                parentPanel.revalidate();
+            }
+        });
+
+        viewGradesAndGPAButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parentPanel.removeAll();
+                parentPanel.add(viewGradesAndGPA);
                 parentPanel.repaint();
                 parentPanel.revalidate();
             }
@@ -364,7 +385,29 @@ public class Lecturer {
                 stuLevel = studentLevelComboBox.getSelectedIndex();
 
                 if (stuLevel != 0) {
+                    showLecturerDetails();
                     showStudentDetails(stuLevel);
+                }
+            }
+
+            public void showLecturerDetails() {
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String sql = "SELECT * FROM lecturer WHERE username =?";
+
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, lecUsername);
+                    ResultSet rs = pstmt.executeQuery();
+
+                    if (rs.next()) {
+                        depid = rs.getString("depid");
+                    }
+
+
+                } catch (SQLException e) {
+                    System.out.println("Statement error: " + e.getMessage());
                 }
             }
 
@@ -372,19 +415,21 @@ public class Lecturer {
                 DbConnector db = new DbConnector();
                 conn = db.getConnection();
 
-                String sql = "SELECT * FROM student WHERE stu_level=?";
+                String sql = "SELECT * FROM student WHERE stu_level=? AND depid = ?";
 
                 try {
                     PreparedStatement pstmt = conn.prepareStatement(sql);
                     pstmt.setInt(1, stuLevel);
+                    pstmt.setString(2, depid);
                     ResultSet rs = pstmt.executeQuery();
 
-                    String[] columnNames = {"stuid","username","password","fname","lname","email","dob","pnumber","ppicture","stu_level"};
+                    String[] columnNames = {"stuid","depid","username","password","fname","lname","email","dob","pnumber","ppicture","stu_level"};
                     DefaultTableModel model = new DefaultTableModel(columnNames,0);
 
                     while (rs.next()) {
                         Object[] row = {
                                 rs.getString("stuid"),
+                                rs.getString("depid"),
                                 rs.getString("username"),
                                 rs.getString("password"),
                                 rs.getString("fname"),
@@ -470,5 +515,6 @@ public class Lecturer {
                 chooser.showOpenDialog(null);
             }
         });
+
     }
 }
