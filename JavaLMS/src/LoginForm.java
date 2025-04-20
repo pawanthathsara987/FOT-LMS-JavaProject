@@ -110,6 +110,7 @@ public class LoginForm{
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String storePassword = rs.getString("password");
+                String name = rs.getString("fname") + " " + rs.getString("lname");
                 if (storePassword == null) {
                     frame.dispose();
                     ChangePassword changePassword = new ChangePassword();
@@ -131,7 +132,7 @@ public class LoginForm{
                             break;
                         case "admin":
                             frame.dispose();
-                            Admin ad = new Admin(username);
+                            Admin ad = new Admin(username, name);
                             break;
                     }
                 } else {
