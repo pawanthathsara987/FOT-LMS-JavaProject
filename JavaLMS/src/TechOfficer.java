@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,10 +23,8 @@ public class TechOfficer {
     private JPanel titlepanel;
     private JLabel viewlabel;
     private JComboBox comboBox3;
-    private JButton deleteButton;
-    private JButton editButton;
     private JScrollBar scrollBar1;
-    private JTable table1;
+    private JTable view_atten_table;
     private JPanel addmedicalpanel;
     private JComboBox comboBox5;
     private JButton deleteButton1;
@@ -39,7 +38,6 @@ public class TechOfficer {
     private JTextField attendate_text;
     private JComboBox atten_type_combo;
     private JComboBox atten_pre_combo;
-    private JComboBox atten_level_combo;
     private JScrollBar scrollBar3;
     private JTable attenViewtable;
     private JPanel Addatten;
@@ -53,7 +51,6 @@ public class TechOfficer {
     private JButton atten_deleteButton;
     private JComboBox aetype_combo;
     private JComboBox aepre_combo;
-    private JComboBox ae_combo;
     private JTextField aestu_text;
     private JTextField aecour_text;
     private JTextField aedate_text;
@@ -113,6 +110,21 @@ public class TechOfficer {
     private JButton medselect;
     private JTextField Emeddate;
     private JTextField Emeddes;
+    private JLabel username;
+    private JButton selectButton;
+    private JComboBox attenmed;
+    private JTextField attenhour;
+    private JLabel attendep;
+    private JComboBox attendepcombo;
+    private JTextField aehour;
+    private JLabel depa;
+    private JComboBox aedepcombo;
+    private JComboBox aemedical;
+    private JTextField sestu;
+    private JTextField secour;
+    private JButton sebtn;
+    private JButton refreshButton;
+    private JButton deselect;
     private JButton attenselect;
 
     private String stuid;
@@ -121,6 +133,10 @@ public class TechOfficer {
     private String des;
     private String type;
     private String pre;
+    private String hour;
+    private String med;
+    private String dep;
+
 
 
     public TechOfficer() {
@@ -132,6 +148,9 @@ public class TechOfficer {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.setResizable(false);
+
+        //username.setText(techName);
+
 
         CardLayout cardlayout = new CardLayout();
         cardpanel.setLayout(cardlayout);
@@ -154,9 +173,9 @@ public class TechOfficer {
         medcard.add(medDelete,"mcard3");
 
         addAttendanceButton.addActionListener(e -> cardlayout.show(cardpanel,"card1"));
-        viewAttendanceButton.addActionListener(e -> cardlayout.show(cardpanel,"card4"));
+        viewAttendanceButton.addActionListener(e -> cardlayout.show(cardpanel,"card3"));
         addMedicalButton.addActionListener(e -> cardlayout.show(cardpanel,"card2"));
-        viewMedicalButton.addActionListener(e -> cardlayout.show(cardpanel,"card3"));
+        viewMedicalButton.addActionListener(e -> cardlayout.show(cardpanel,"card4"));
 
         createButton.addActionListener(e -> cardlayout.show(crtattenpanel,"card5"));
         editButton2.addActionListener(e -> cardlayout.show(crtattenpanel,"card6"));
@@ -174,6 +193,12 @@ public class TechOfficer {
 
         loadMedicalTable();
 
+        //viewAttendance();
+
+
+
+
+
         atten_submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -190,8 +215,6 @@ public class TechOfficer {
         });
 
 
-
-
         aeselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -199,12 +222,16 @@ public class TechOfficer {
                 if (selectedRow >= 0) {
                     aestu_text.setText(attenViewtable.getValueAt(selectedRow, 0).toString());
                     aecour_text.setText(attenViewtable.getValueAt(selectedRow, 1).toString());
-                    aedate_text.setText(attenViewtable.getValueAt(selectedRow, 2).toString());
-                    aetype_combo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 3).toString());
-                    aepre_combo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 4).toString());
+                    aedate_text.setText(attenViewtable.getValueAt(selectedRow, 3).toString()); // sdate
+                    aetype_combo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 4).toString()); // ctype
+                    aepre_combo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 5).toString()); // present
+                    aedepcombo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 2).toString()); // depid
+                    aehour.setText(attenViewtable.getValueAt(selectedRow, 6).toString()); // hours
+                    aemedical.setSelectedItem(attenViewtable.getValueAt(selectedRow, 7).toString()); // medical
                 }
             }
         });
+
 
 
 
@@ -231,10 +258,46 @@ public class TechOfficer {
                 }
             }
         });
+
         mededit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 editMedical();
+            }
+        });
+
+        selectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //viewAttendance();
+            }
+        });
+        sebtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchAttendanceByIdOrCourse();
+            }
+        });
+        atten_deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteAttendance();
+            }
+        });
+        deselect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = attenViewtable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    aestu_text.setText(attenViewtable.getValueAt(selectedRow, 0).toString());
+                    aecour_text.setText(attenViewtable.getValueAt(selectedRow, 1).toString());
+                    aedate_text.setText(attenViewtable.getValueAt(selectedRow, 3).toString()); // sdate
+                    aetype_combo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 4).toString()); // ctype
+                    aepre_combo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 5).toString()); // present
+                    aedepcombo.setSelectedItem(attenViewtable.getValueAt(selectedRow, 2).toString()); // depid
+                    aehour.setText(attenViewtable.getValueAt(selectedRow, 6).toString()); // hours
+                    aemedical.setSelectedItem(attenViewtable.getValueAt(selectedRow, 7).toString()); // medical
+                }
             }
         });
     }
@@ -251,12 +314,17 @@ public class TechOfficer {
 
 
     private void createAttendanceTable() {
-        String[] columns = {"Student ID", "Course Code", "Date", "Type","Present"};
+        String[] columns = {"Student ID", "Course Code", "Dep", "Date", "Type", "Present", "Hours", "Medical"};
         Object[][] data = {}; // or populate from DB later
 
         DefaultTableModel model = new DefaultTableModel(data, columns);
         attenViewtable.setModel(model);
 
+        // Customize header
+        JTableHeader header = attenViewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);                  
     }
 
     private void addAttendance() {
@@ -264,18 +332,30 @@ public class TechOfficer {
         course = attencour_text.getText().trim();
         date = attendate_text.getText().trim();
         type = (String) atten_type_combo.getSelectedItem();  // ctype
-        pre = (String) atten_pre_combo.getSelectedItem();    // "Present"/"Absent"
+        pre = (String) atten_pre_combo.getSelectedItem();
+        dep = (String) attendepcombo.getSelectedItem();
+        hour = attenhour.getText().trim();
+        med = (String) attenmed.getSelectedItem();
 
         // Validate input
-        if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || type == null || pre == null) {
+        if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || type == null || pre == null || hour.isEmpty() || med == null || dep == null) {
             JOptionPane.showMessageDialog(null, "Please fill in all fields.");
             return;
         }
 
         // Convert presence to TINYINT (1 = present, 0 = absent)
         int present = pre.equalsIgnoreCase("Present") ? 1 : 0;
+        int medical = med.equalsIgnoreCase("True") ? 1 : 0;
+        int hourInt;
 
-        String sql = "INSERT INTO attendance (stuid, ccode, sdate, ctype, present, msubmit) VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            hourInt = Integer.parseInt(hour);  // Ensure it's an integer for database
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Invalid hours. Please enter a number.");
+            return;
+        }
+
+        String sql = "INSERT INTO attendance (stuid, ccode, sdate, ctype, present, msubmit, depid, hours) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             DbConnector db = new DbConnector();
@@ -284,10 +364,12 @@ public class TechOfficer {
 
             pstmt.setString(1, stuid);
             pstmt.setString(2, course);
-            pstmt.setDate(3, java.sql.Date.valueOf(date)); // Ensure date is in YYYY-MM-DD format
+            pstmt.setDate(3, java.sql.Date.valueOf(date)); // Format: YYYY-MM-DD
             pstmt.setString(4, type);
             pstmt.setInt(5, present);
-            pstmt.setInt(6, 0); // msubmit is initially 0 unless medical is submitted
+            pstmt.setInt(6, medical);
+            pstmt.setString(7, dep);
+            pstmt.setInt(8, hourInt);  // Insert hours as int
 
             pstmt.executeUpdate();
 
@@ -296,7 +378,7 @@ public class TechOfficer {
 
             JOptionPane.showMessageDialog(null, "Attendance added successfully!");
             clearAttendanceFields();
-            createAttendanceTable(); // Refresh the table
+            createAttendanceTable(); // Refresh table
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -307,10 +389,11 @@ public class TechOfficer {
     }
 
 
-
     private void loadAttendanceTable() {
-        String sql = "SELECT a.stuid, a.ccode, a.sdate, a.ctype, " +
-                "CASE a.present WHEN 1 THEN 'Present' ELSE 'Absent' END AS status " +
+        String sql = "SELECT a.stuid, a.ccode, a.depid, a.sdate, a.ctype, " +
+                "CASE a.present WHEN 1 THEN 'Present' ELSE 'Absent' END AS status, " +
+                "a.hours, " +
+                "CASE a.msubmit WHEN 1 THEN 'Yes' ELSE 'No' END AS medical " +
                 "FROM attendance a " +
                 "JOIN student s ON a.stuid = s.stuid " +
                 "ORDER BY a.sdate DESC";
@@ -318,25 +401,27 @@ public class TechOfficer {
         try {
             DbConnector db = new DbConnector();
             Connection conn = db.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
 
-            // You can use DefaultTableModel to populate JTable
             DefaultTableModel model = (DefaultTableModel) attenViewtable.getModel();
-            model.setRowCount(0); // Clear existing data
+            model.setRowCount(0); // Clear old data
 
             while (rs.next()) {
                 String stuid = rs.getString("stuid");
                 String course = rs.getString("ccode");
+                String dep = rs.getString("depid");
                 String date = rs.getString("sdate");
                 String type = rs.getString("ctype");
-                String status = rs.getString("status");
+                String status = rs.getString("status"); // 'status' is the alias in the query
+                int hours = rs.getInt("hours");
+                String medical = rs.getString("medical");
 
-                model.addRow(new Object[]{stuid, course, date, type, status});
+                model.addRow(new Object[]{stuid, course, dep, date, type, status, hours, medical});
             }
 
             rs.close();
-            stmt.close();
+            pstmt.close();
             conn.close();
 
         } catch (SQLException e) {
@@ -348,7 +433,6 @@ public class TechOfficer {
 
 
 
-
     // Edit Button Action (Save changes)
     private void editAttendance() {
         String stuId = aestu_text.getText().trim();
@@ -356,28 +440,35 @@ public class TechOfficer {
         String date = aedate_text.getText().trim();
         String type = (String) aetype_combo.getSelectedItem();
         String present = (String) aepre_combo.getSelectedItem();
+        String hours = aehour.getText().trim();
+        String dep = (String)aedepcombo.getSelectedItem().toString();
+        String med = (String)aemedical.getSelectedItem().toString();
 
         // Validate input
-        if (stuId.isEmpty() || course.isEmpty() || date.isEmpty() || type == null || present == null) {
+        if (stuId.isEmpty() || course.isEmpty() || date.isEmpty() || type == null || present == null || hours.isEmpty() || dep == null || medvtable == null) {
             JOptionPane.showMessageDialog(null, "Please fill in all fields.");
             return;
         }
 
         int presentValue = present.equalsIgnoreCase("Present") ? 1 : 0;
+        int medValue = med.equalsIgnoreCase("Yes") || med.equalsIgnoreCase("True") ? 1 : 0;
 
         // Prepare the update query
-        String sql = "UPDATE attendance SET ctype = ?, present = ? WHERE stuid = ? AND ccode = ? AND sdate = ?";
+        String sql = "UPDATE attendance SET hours = ?, present = ?, depid = ?, msubmit = ? WHERE stuid = ? AND ccode = ? AND sdate = ? AND ctype = ?";
 
         try {
             DbConnector db = new DbConnector();
             Connection conn = db.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
-            pstmt.setString(1, type);
+            pstmt.setString(1, hours);
             pstmt.setInt(2, presentValue);
-            pstmt.setString(3, stuId);
-            pstmt.setString(4, course);
-            pstmt.setDate(5, java.sql.Date.valueOf(date));
+            pstmt.setString(3, dep);
+            pstmt.setInt(4, medValue);
+            pstmt.setString(5, stuId);
+            pstmt.setString(6, course);
+            pstmt.setDate(7, java.sql.Date.valueOf(date));
+            pstmt.setString(8, type);
 
             int updated = pstmt.executeUpdate();
 
@@ -399,6 +490,110 @@ public class TechOfficer {
 
 
 }
+
+    private void searchAttendanceByIdOrCourse() {
+        String stuId = sestu.getText().trim();
+        String courseCode = secour.getText().trim();
+
+        String sql = "SELECT a.stuid, a.ccode, a.depid, a.sdate, a.ctype, " +
+                "CASE a.present WHEN 1 THEN 'Present' ELSE 'Absent' END AS status, " +
+                "a.hours, " +
+                "CASE a.msubmit WHEN 1 THEN 'Yes' ELSE 'No' END AS medical " +
+                "FROM attendance a " +
+                "JOIN student s ON a.stuid = s.stuid " +
+                "WHERE (? = '' OR a.stuid = ?) AND (? = '' OR a.ccode = ?) " +
+                "ORDER BY a.sdate DESC";
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, stuId);
+            pstmt.setString(2, stuId);
+            pstmt.setString(3, courseCode);
+            pstmt.setString(4, courseCode);
+
+            ResultSet rs = pstmt.executeQuery();
+            DefaultTableModel model = (DefaultTableModel) attenViewtable.getModel();
+            model.setRowCount(0); // Clear table
+
+            while (rs.next()) {
+                String id = rs.getString("stuid");
+                String course = rs.getString("ccode");
+                String dep = rs.getString("depid");
+                String date = rs.getString("sdate");
+                String type = rs.getString("ctype");
+                String status = rs.getString("status");
+                int hours = rs.getInt("hours");
+                String medical = rs.getString("medical");
+
+                model.addRow(new Object[]{id, course, dep, date, type, status, hours, medical});
+            }
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error fetching attendance data.");
+        }
+    }
+
+
+    private void deleteAttendance() {
+        String stuId = aestu_text.getText().trim();
+        String course = aecour_text.getText().trim();
+        String date = aedate_text.getText().trim();
+        String type = (String) aetype_combo.getSelectedItem();
+
+        // Validate input
+        if (stuId.isEmpty() || course.isEmpty() || date.isEmpty() || type == null) {
+            JOptionPane.showMessageDialog(null, "Please fill in Student ID, Course Code, Date, and Type.");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(null,
+                "Are you sure you want to delete this attendance record?",
+                "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        String sql = "DELETE FROM attendance WHERE stuid = ? AND ccode = ? AND sdate = ? AND ctype = ?";
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, stuId);
+            pstmt.setString(2, course);
+            pstmt.setDate(3, java.sql.Date.valueOf(date));
+            pstmt.setString(4, type);
+
+            int deleted = pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+
+            if (deleted > 0) {
+                JOptionPane.showMessageDialog(null, "Attendance record deleted successfully!");
+                loadAttendanceTable(); // Refresh table
+            } else {
+                JOptionPane.showMessageDialog(null, "Delete failed. Record not found.");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error occurred.");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid date format. Use YYYY-MM-DD.");
+        }
+    }
+
+
 
     private void clearMedicalFields() {
         medtextstu.setText("");
@@ -548,6 +743,67 @@ private void addMedical() {
 
         DefaultTableModel model = new DefaultTableModel(data, medcol);
         med_table.setModel(model);
+    }
+
+    /*
+
+    private void viewAttendance() {
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+
+        String sql = "SELECT * FROM attendance";
+
+        try {
+
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            // Set column headers only once
+            String[] columns = {"Student ID", "Course Code", "Date", "Type", "Present", "Hours", "Medical ID"};
+            DefaultTableModel model = new DefaultTableModel(columns, 0);
+            view_atten_table.setModel(model);
+
+            while (rs.next()) {
+                String stuid = rs.getString("stuid");
+                String course = rs.getString("ccode");
+                String date = rs.getString("sdate");
+                String type = rs.getString("ctype");
+                String status = rs.getString("status");
+                String hours = rs.getString("hours");
+                String med = rs.getString("medid");
+
+                model.addRow(new Object[]{stuid, course, date, type, status, hours, med});
+            }
+
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+     */
+
+
+
+  /*  private void createAttendanceViewTable() {
+        String[] latent = {"Student ID","Course Code","Date", "Type","Present","Hours","Medical ID","Percentage"};
+        Object[][] data = {};
+
+        DefaultTableModel model = new DefaultTableModel(data, latent);
+        view_atten_table.setModel(model);
+
+    }
+
+
+   */
+
+
+    private void viewMedical(){
+
     }
 
 
