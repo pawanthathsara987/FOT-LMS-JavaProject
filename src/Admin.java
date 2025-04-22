@@ -5,6 +5,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.*;
 import java.time.*;
 
@@ -284,6 +286,15 @@ public class Admin {
         uedit_btn.addActionListener(listener);
         udelete_btn.addActionListener(listener);
 
+        tdlevel.addActionListener(listener);
+        tddepartment.addActionListener(listener);
+        userinfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectRow();
+            }
+        });
+
         //------------------------------------------------------------COURSE----------------------------------------------------------------------------------------//
         ccreate_btn.setBackground(Color.GREEN);  //set default panel button to green color
         showAvailableLecturers();
@@ -334,6 +345,13 @@ public class Admin {
         };
         ccourselevel.addActionListener(listener5);
         cdepartment.addActionListener(listener5);
+
+        courseInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectRow();
+            }
+        });
 
         //------------------------------------------------------------Time Table----------------------------------------------------------------------------------------//
 
@@ -439,8 +457,6 @@ public class Admin {
                 showTimeTableDetails();
             }
         };
-        tdlevel.addActionListener(listener7);
-        tddepartment.addActionListener(listener7);
     }
 
     //------------------------------------------------------------USER----------------------------------------------------------------------------------------//
@@ -689,7 +705,8 @@ public class Admin {
                 showNextUsername();
                 showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException("Error inserting admin: " + e.getMessage(), e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (userType.equals("Lecturer")) {
 
@@ -713,7 +730,8 @@ public class Admin {
                 showUserDetails();
                 showAvailableLecturers();
             } catch (SQLException e) {
-                throw new RuntimeException("Error inserting Lecturer: " + e.getMessage(), e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } else if (userType.equals("Student")) {
@@ -738,7 +756,8 @@ public class Admin {
                 showNextUsername();
                 showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException("Error inserting Student: " + e.getMessage(), e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         }else if (userType.equals("Technical Officer")) {
@@ -762,7 +781,8 @@ public class Admin {
                 showNextUsername();
                 showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException("Error inserting Technical Officer: " + e.getMessage(), e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(frame, "Invalid user type!");
@@ -836,7 +856,8 @@ public class Admin {
                 setFieldToNull();
                 showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException("Error updating admin: " + e.getMessage(), e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (userType.equals("Lecturer")) {
 
@@ -858,7 +879,8 @@ public class Admin {
                 setFieldToNull();
                 showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException("Error updating Lecturer: " + e.getMessage(), e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         } else if (userType.equals("Student")) {
@@ -882,7 +904,8 @@ public class Admin {
                 setFieldToNull();
                 showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException("Error updating Student: " + e.getMessage(), e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
 
         }else if (userType.equals("Technical Officer")) {
@@ -904,7 +927,8 @@ public class Admin {
                 setFieldToNull();
                 showUserDetails();
             } catch (SQLException e) {
-                throw new RuntimeException("Error updating Technical Officer: " + e.getMessage(), e);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database connection error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(frame, "Invalid user type!");
@@ -916,8 +940,7 @@ public class Admin {
     public void deleteUser() {
         String uname = dltuname.getText().toUpperCase();
         String usertype = dltusertype.getSelectedItem().toString().toLowerCase();
-        System.out.println(uname + " " + usertype);
-        if (usertype.equals("Technical Officer")) {
+        if (usertype.equals("technical officer")) {
             usertype = "technician";
         }
 
@@ -944,6 +967,7 @@ public class Admin {
                 break;
             default:
                 JOptionPane.showMessageDialog(frame, "Please enter valid username!");
+                System.out.println("Invalid username!");
                 return;
         }
 
@@ -1602,6 +1626,22 @@ public class Admin {
     public void setNoticeFieldToNull() {
         ntitle.setText(null);
         ndescription.setText(null);
+    }
+    
+    //
+    public void selectRow() {
+        if (uedit_btn.getBackground() == Color.GREEN) {
+            unamebox1.setText(userinfo.getValueAt(userinfo.getSelectedRow(), 1).toString());
+            fnamebox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 2).toString());
+            lnamebox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 3).toString());
+            emailbox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 4).toString());
+            dobbox1.getModel().setSelected(userinfo.getValueAt((userinfo.getSelectedRow()), 5).toString().equals("Yes"));
+            pnobox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 6).toString());
+        } else if (udelete_btn.getBackground() == Color.GREEN) {
+            dltuname.setText(userinfo.getValueAt(userinfo.getSelectedRow(), 1).toString());
+        } else if (cdelete_btn.getBackground() == Color.GREEN) {
+            cdcoursecode.setText(courseInfo.getValueAt(courseInfo.getSelectedRow(), 0).toString());
+        } else return;
     }
 
 }
