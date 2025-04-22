@@ -11,18 +11,19 @@
     </properties>
     <border type="none"/>
     <children>
-      <grid id="bd27c" binding="sidePanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="bd27c" binding="sidePanel" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints border-constraint="West"/>
         <properties>
           <background color="-7696213"/>
-          <maximumSize width="300" height="200"/>
-          <minimumSize width="300" height="200"/>
-          <preferredSize width="300" height="200"/>
+          <maximumSize width="300" height="750"/>
+          <minimumSize width="300" height="750"/>
+          <preferredSize width="300" height="750"/>
         </properties>
         <border type="none"/>
         <children>
-          <grid id="122a0" binding="lecturerLabel" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="36f02" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="0" indent="0" use-parent-layout="false">
                 <minimum-size width="300" height="100"/>
@@ -35,127 +36,34 @@
             </properties>
             <border type="none"/>
             <children>
-              <component id="93434" class="javax.swing.JLabel">
-                <constraints border-constraint="Center"/>
+              <component id="b8507" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
                 <properties>
-                  <background color="-7696213"/>
-                  <font name="Consolas" size="24" style="1"/>
+                  <font name="Consolas" size="36" style="1"/>
                   <horizontalAlignment value="0"/>
                   <horizontalTextPosition value="0"/>
-                  <maximumSize width="300" height="50"/>
-                  <minimumSize width="300" height="50"/>
-                  <preferredSize width="300" height="50"/>
                   <text value="Lecturer"/>
-                  <verticalAlignment value="0"/>
                 </properties>
               </component>
             </children>
           </grid>
-          <grid id="680bb" binding="actionButtons" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="10" left="10" bottom="10" right="10"/>
+          <grid id="9518e" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="300" height="100"/>
+                <preferred-size width="300" height="100"/>
+                <maximum-size width="300" height="100"/>
+              </grid>
             </constraints>
             <properties>
               <background color="-7696213"/>
             </properties>
             <border type="none"/>
             <children>
-              <component id="d78f3" class="javax.swing.JButton" binding="addLectureMaterialButton" default-binding="true">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="250" height="30"/>
-                    <preferred-size width="250" height="30"/>
-                    <maximum-size width="250" height="30"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <text value="Add Lecture Material"/>
-                </properties>
-              </component>
-              <component id="fd6fb" class="javax.swing.JButton" binding="viewStudentDetailsButton">
-                <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="250" height="30"/>
-                    <preferred-size width="250" height="30"/>
-                    <maximum-size width="250" height="30"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <text value="View Student Details"/>
-                </properties>
-              </component>
-              <component id="11dca" class="javax.swing.JButton" binding="viewTimeTableButton" default-binding="true">
-                <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="250" height="30"/>
-                    <preferred-size width="250" height="30"/>
-                    <maximum-size width="250" height="30"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <text value="View Time Table"/>
-                </properties>
-              </component>
-              <component id="28a01" class="javax.swing.JButton" binding="UpdateMarksButton">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="250" height="30"/>
-                    <preferred-size width="250" height="30"/>
-                    <maximum-size width="250" height="30"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <text value="Update Marks"/>
-                </properties>
-              </component>
-              <component id="69349" class="javax.swing.JButton" binding="viewStudentEligibilityButton" default-binding="true">
-                <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="250" height="30"/>
-                    <preferred-size width="250" height="30"/>
-                    <maximum-size width="250" height="30"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <text value="View Student Eligibility"/>
-                </properties>
-              </component>
-              <component id="73df5" class="javax.swing.JButton" binding="addMarksButton">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="250" height="30"/>
-                    <preferred-size width="250" height="30"/>
-                    <maximum-size width="250" height="30"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <text value="Add Marks"/>
-                </properties>
-              </component>
-              <component id="e43c5" class="javax.swing.JButton" binding="viewGradesAndGPAButton">
-                <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <minimum-size width="250" height="30"/>
-                    <preferred-size width="250" height="30"/>
-                    <maximum-size width="250" height="30"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <text value="View Grades and GPA"/>
-                </properties>
-              </component>
-            </children>
-          </grid>
-          <grid id="2350a" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="f82e9" class="javax.swing.JLabel" binding="lecNameLabel">
+              <component id="57b45" class="javax.swing.JLabel" binding="lecNameLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -163,6 +71,167 @@
                   <text value=""/>
                 </properties>
               </component>
+            </children>
+          </grid>
+          <vspacer id="2af77">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </vspacer>
+          <grid id="53b16" binding="actionButtons" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="300" height="500"/>
+                <preferred-size width="300" height="500"/>
+                <maximum-size width="300" height="500"/>
+              </grid>
+            </constraints>
+            <properties>
+              <background color="-7696213"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <grid id="db4a7" binding="addLectureMaterialButtonPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-7696213"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="3843d" class="javax.swing.JButton" binding="addLectureMaterialButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Add Lecture Materials"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="dbca5" binding="viewStudentDetailsButtonPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-7696213"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="1fcc7" class="javax.swing.JButton" binding="viewStudentDetailsButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="View Student Details"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="6a6f4" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-7696213"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="66916" class="javax.swing.JButton" binding="addMarksButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Add Marks"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="7def5" binding="UpdateMarksButtonPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-7696213"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="cb28a" class="javax.swing.JButton" binding="UpdateMarksButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Update Marks"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="90535" binding="viewStudentEligibilityButtonPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-7696213"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="97715" class="javax.swing.JButton" binding="viewStudentEligibilityButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="View Student Eligibility"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="82a5e" binding="viewTimeTableButtonPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-7696213"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="5fe8a" class="javax.swing.JButton" binding="viewTimeTableButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="View Time Table"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="57da5" binding="viewGradesAndGPAButtonPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-7696213"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="29385" class="javax.swing.JButton" binding="viewGradesAndGPAButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="View Grades and GPA"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
             </children>
           </grid>
         </children>

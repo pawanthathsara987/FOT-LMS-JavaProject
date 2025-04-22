@@ -15,6 +15,7 @@ public class Lecturer {
     private JPanel MainPanel;
     private JButton addLectureMaterialButton;
     private JButton viewStudentDetailsButton;
+    private JButton viewGradesAndGPAButton;
     private JButton viewTimeTableButton;
     private JButton UpdateMarksButton;
     private JButton addMarksButton;
@@ -32,8 +33,6 @@ public class Lecturer {
     private JPanel viewStudentDetailsPanel;
     private JPanel parentPanel;
     private JPanel sidePanel;
-    private JPanel lecturerLabel;
-    private JPanel actionButtons;
     private JTable stuMarksTable;
     private JPanel tablePanel;
     private JTextField enteredMarksField;
@@ -70,9 +69,16 @@ public class Lecturer {
     private JButton uploadAssingmentButton;
     private JComboBox lecWeekComboBox;
     private JPanel viewGradesAndGPA;
-    private JButton viewGradesAndGPAButton;
+
     private JButton VIEWButton;
     private JLabel lecNameLabel;
+    private JPanel actionButtons;
+    private JPanel addLectureMaterialButtonPanel;
+    private JPanel UpdateMarksButtonPanel;
+    private JPanel viewStudentEligibilityButtonPanel;
+    private JPanel viewGradesAndGPAButtonPanel;
+    private JPanel viewTimeTableButtonPanel;
+    private JPanel viewStudentDetailsButtonPanel;
 
 
     private String stuid;
