@@ -1,14 +1,16 @@
+package Database;
+
 import java.sql.*;
 
 public class DbConnector {
 
-    private String url = "jdbc:mysql://localhost:3306/javalms";
-    private String user = "root";
-    private String password = "1234";
-    private Connection conn = null;
-    private Statement stmt = null;
+    private static String url = "jdbc:mysql://localhost:3306/javalms";
+    private static String user = "root";
+    private static String password = "1234";
+    private static Connection conn = null;
+    private static Statement stmt = null;
 
-    private void registerDriver(){
+    private static void registerDriver(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -16,7 +18,7 @@ public class DbConnector {
         }
     }
 
-    public Connection getConnection(){
+    public static Connection getConnection(){
 
         registerDriver();
 
