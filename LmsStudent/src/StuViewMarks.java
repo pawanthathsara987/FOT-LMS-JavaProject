@@ -4,21 +4,17 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 public class StuViewMarks {
-    private JPanel MainPanal;
+    private JPanel rootPanel;
     private JPanel title;
     private JPanel Table;
     private JPanel middle;
-    private JTable table1;
+    private JPanel botem;
+    private JButton button1;
+    private JTable showTable;
 
 
     public StuViewMarks() {
         createTable();
-    }
-
-
-    public JPanel getRootPanel() {
-        JPanel rootPanel;
-        return rootPanel;
     }
 
     public void createTable() {
