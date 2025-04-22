@@ -18,7 +18,7 @@ public class DbConnector {
 
     public Connection getConnection(){
 
-        registerDriver();
+    registerDriver();
 
         try {
             conn = DriverManager.getConnection(url, user, password);
@@ -49,14 +49,14 @@ public class DbConnector {
 
                 System.out.println(
                         rs.getString(1)+ ", " +
-                                rs.getString(2) + ", " +
-                                rs.getString(3) + ", " +
-                                rs.getString(4) + ", " +
-                                rs.getString(5) + ", " +
-                                rs.getString(6) + ", " +
-                                rs.getString(7) + ", " +
-                                rs.getString(8) + ", " +
-                                rs.getString(9));
+                        rs.getString(2) + ", " +
+                        rs.getString(3) + ", " +
+                        rs.getString(4) + ", " +
+                        rs.getString(5) + ", " +
+                        rs.getString(6) + ", " +
+                        rs.getString(7) + ", " +
+                        rs.getString(8) + ", " +
+                        rs.getString(9));
             }
         } catch (SQLException e) {
             System.out.println("Statement error" + e.getMessage());
@@ -89,7 +89,6 @@ public class DbConnector {
             System.out.println("Statement error" + e.getMessage());
         }
     }
-
     public void close() {
         try {
             if (stmt != null) stmt.close();
