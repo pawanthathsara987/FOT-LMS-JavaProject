@@ -109,7 +109,7 @@ public class TechOfficer {
     private JTextArea medtextdes;
     private JButton medselect;
     private JTextField Emeddate;
-    private JTextField Emeddes;
+    private JTextArea Emeddes;
     private JLabel username;
     private JButton selectButton;
     private JComboBox attenmed;
@@ -125,6 +125,12 @@ public class TechOfficer {
     private JButton sebtn;
     private JButton refreshButton;
     private JButton deselect;
+    private JTextField semedstu;
+    private JTextField semedcour;
+    private JButton medsebtn;
+    private JButton button2;
+    private JTextField medid;
+    private JButton dmedselect;
     private JButton attenselect;
 
     private String stuid;
@@ -139,7 +145,7 @@ public class TechOfficer {
 
 
 
-    public TechOfficer() {
+    public TechOfficer(String techuser, String techName) {
         JFrame frame = new JFrame("Add Attendance");
         frame.setContentPane(MainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -149,7 +155,7 @@ public class TechOfficer {
         frame.setVisible(true);
         frame.setResizable(false);
 
-        //username.setText(techName);
+        username.setText(techName);
 
 
         CardLayout cardlayout = new CardLayout();
@@ -249,7 +255,7 @@ public class TechOfficer {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = med_table.getSelectedRow();
                 if (selectedRow >= 0) {
-
+                    medid.setText(med_table.getValueAt(selectedRow, 0).toString());
                     Emedstu.setText(med_table.getValueAt(selectedRow, 1).toString());
                     Emedcour.setText(med_table.getValueAt(selectedRow, 2).toString());
                     Emeddate.setText(med_table.getValueAt(selectedRow, 3).toString());
@@ -284,6 +290,7 @@ public class TechOfficer {
                 deleteAttendance();
             }
         });
+
         deselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -298,6 +305,35 @@ public class TechOfficer {
                     aehour.setText(attenViewtable.getValueAt(selectedRow, 6).toString()); // hours
                     aemedical.setSelectedItem(attenViewtable.getValueAt(selectedRow, 7).toString()); // medical
                 }
+            }
+        });
+
+        medsebtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchMedicalRecord();
+            }
+        });
+
+        dmedselect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = med_table.getSelectedRow();
+                if (selectedRow >= 0) {
+                    medid.setText(med_table.getValueAt(selectedRow, 0).toString());
+                    Emedstu.setText(med_table.getValueAt(selectedRow, 1).toString());
+                    Emedcour.setText(med_table.getValueAt(selectedRow, 2).toString());
+                    Emeddate.setText(med_table.getValueAt(selectedRow, 3).toString());
+                    Emeddes.setText(med_table.getValueAt(selectedRow, 4).toString());
+
+                }
+            }
+        });
+        deleteButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteMedicalRecord();
+                loadMedicalTable();
             }
         });
     }
@@ -324,7 +360,7 @@ public class TechOfficer {
         JTableHeader header = attenViewtable.getTableHeader();
         header.setFont(new Font("SansSerif", Font.BOLD, 14));
         header.setBackground(new Color(204, 255, 204));
-        header.setForeground(Color.BLACK);                  
+        header.setForeground(Color.BLACK);
     }
 
     private void addAttendance() {
@@ -691,6 +727,7 @@ private void addMedical() {
 
 
     private void editMedical() {
+        String mid = medid.getText().trim();
         String stuId = Emedstu.getText().trim();
         String course = Emedcour.getText().trim();
         String date = Emeddate.getText().trim();
@@ -702,7 +739,7 @@ private void addMedical() {
             return;
         }
 
-        String sql = "UPDATE medical SET mdescription = ?  WHERE stuid = ? AND ccode = ? AND mdate = ?";
+        String sql = "UPDATE medical SET mdescription = ?, mdate = ? ,stuid = ? , ccode = ? WHERE medid = ?";
 
         try {
             DbConnector db = new DbConnector();
@@ -710,9 +747,11 @@ private void addMedical() {
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, description);
-            pstmt.setString(2, stuId);
-            pstmt.setString(3, course);
-            pstmt.setDate(4, java.sql.Date.valueOf(date));
+            pstmt.setString(3, stuId);
+            pstmt.setString(4, course);
+            pstmt.setDate(2, java.sql.Date.valueOf(date));
+            pstmt.setInt(5, Integer.parseInt(mid));
+
 
             int updated = pstmt.executeUpdate();
 
@@ -734,6 +773,109 @@ private void addMedical() {
     }
 
 
+    private void searchMedicalRecord() {
+        String stuId = semedstu.getText().trim();
+        String courseCode = semedcour.getText().trim();
+
+        String sql = "SELECT m.medid, m.stuid, m.ccode, m.mdate, m.mdescription " +
+                "FROM medical m " +
+                "JOIN student s ON m.stuid = s.stuid " +
+                "WHERE (? = '' OR m.stuid = ?) AND (? = '' OR m.ccode = ?) " +
+                "ORDER BY m.mdate DESC";
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            // Set parameters for student ID and course code, even if empty
+            pstmt.setString(1, stuId.isEmpty() ? "" : stuId);
+            pstmt.setString(2, stuId);
+            pstmt.setString(3, courseCode.isEmpty() ? "" : courseCode);
+            pstmt.setString(4, courseCode);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            DefaultTableModel model = (DefaultTableModel) med_table.getModel();
+            model.setRowCount(0); // Clear table first
+
+            boolean foundRecords = false; // Flag to check if any records are found
+
+            while (rs.next()) {
+                foundRecords = true; // Set flag to true when records are found
+
+                String mid = rs.getString("medid");
+                String id = rs.getString("stuid");
+                String course = rs.getString("ccode");
+                String date = rs.getString("mdate");
+                String description = rs.getString("mdescription");
+
+                model.addRow(new Object[]{mid, id, course, date, description});
+            }
+
+            // If no records are found, show a message
+            if (!foundRecords) {
+                JOptionPane.showMessageDialog(null, "No medical records found for the provided Student ID and Course Code.");
+            }
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error fetching medical records.");
+        }
+    }
+
+
+    private void deleteMedicalRecord() {
+        String mid = medid.getText().trim();
+
+        int confirm = JOptionPane.showConfirmDialog(null,
+                "Are you sure you want to delete this attendance record?",
+                "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+
+        if (confirm != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        String sql = "DELETE FROM medical WHERE medid = ?";
+
+        try {
+            DbConnector db = new DbConnector();
+            Connection conn = db.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, mid);
+
+
+            int deleted = pstmt.executeUpdate();
+
+            pstmt.close();
+            conn.close();
+
+            if (deleted > 0) {
+                JOptionPane.showMessageDialog(null, "MEdical record deleted successfully!");
+                loadAttendanceTable(); // Refresh table
+            } else {
+                JOptionPane.showMessageDialog(null, "Delete failed. Record not found.");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error occurred.");
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(null, "Invalid date format. Use YYYY-MM-DD.");
+        }
+
+
+    }
+
+
+
+
+
+
 
 
 
@@ -743,7 +885,14 @@ private void addMedical() {
 
         DefaultTableModel model = new DefaultTableModel(data, medcol);
         med_table.setModel(model);
+
+        JTableHeader header = med_table.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
     }
+
+
 
     /*
 
@@ -810,7 +959,7 @@ private void addMedical() {
 
 
     public static void main(String[] args) {
-        new TechOfficer();
+        new TechOfficer("John1","John");
 
     }
 

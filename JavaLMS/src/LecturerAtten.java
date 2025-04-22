@@ -2,29 +2,23 @@
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import java.awt.*;
 
-public class ViewCourse {
+public class LecturerAtten {
     private JPanel MainPanel;
     private JLabel name;
     private JLabel picture;
     private JButton addLectureMaterialButton;
-    private JButton viewCourseButton;
+    private JButton attendanceButton;
     private JButton addMarksButton;
     private JButton viewStudentDetailsButton;
     private JButton viewStudentEligibilityButton;
     private JButton viewTimeTableButton;
     private JButton viewMedicalButton;
     private JPanel cardpanel;
-    private JComboBox comboBox1;
-    private JButton findButton;
-    private JScrollBar scrollBar1;
-    private JComboBox comboBox2;
-    private JScrollPane scrolpanel;
+    private JPanel leftpanel;
     private JTable showtable;
 
-    public ViewCourse() {
+    public LecturerAtten() {
         JFrame frame = new JFrame("ViewCourse");
         frame.setContentPane(MainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,7 +43,7 @@ public class ViewCourse {
     }
 
     public static void main(String[] args) {
-        new ViewCourse();
+        new LecturerAtten();
     }
 }
 
