@@ -50,7 +50,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="bd67a" class="javax.swing.JTable" binding="table1" default-binding="true">
+                  <component id="bd67a" class="javax.swing.JTable" binding="showTable">
                     <constraints/>
                     <properties/>
                   </component>
