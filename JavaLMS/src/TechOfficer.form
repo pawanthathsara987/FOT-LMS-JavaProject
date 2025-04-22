@@ -895,7 +895,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="7159e" class="javax.swing.JComboBox" binding="comboBox3" default-binding="true">
+                      <component id="7159e" class="javax.swing.JComboBox" binding="selectcour">
                         <constraints>
                           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="200" height="-1"/>
@@ -951,7 +951,7 @@
                   </grid>
                 </children>
               </grid>
-              <grid id="7333a" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="7333a" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints border-constraint="Center"/>
                 <properties/>
@@ -963,18 +963,23 @@
                     </constraints>
                     <properties/>
                   </component>
-                  <component id="c2be7" class="javax.swing.JTable" binding="view_atten_table">
+                  <scrollpane id="b81b9">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="50"/>
-                      </grid>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
-                    <properties>
-                      <inheritsPopupMenu value="false"/>
-                      <toolTipText value=""/>
-                      <visible value="true"/>
-                    </properties>
-                  </component>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="c2be7" class="javax.swing.JTable" binding="view_atten_table">
+                        <constraints/>
+                        <properties>
+                          <inheritsPopupMenu value="false"/>
+                          <toolTipText value=""/>
+                          <visible value="true"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </scrollpane>
                 </children>
               </grid>
               <grid id="10525" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">

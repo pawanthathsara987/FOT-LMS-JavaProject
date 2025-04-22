@@ -22,7 +22,7 @@ public class TechOfficer {
     private JPanel addattenpanel;
     private JPanel titlepanel;
     private JLabel viewlabel;
-    private JComboBox comboBox3;
+    private JComboBox selectcour;
     private JScrollBar scrollBar1;
     private JTable view_atten_table;
     private JPanel addmedicalpanel;
@@ -200,6 +200,8 @@ public class TechOfficer {
         loadMedicalTable();
 
         //viewAttendance();
+
+        createAttendanceViewTable();
 
 
 
@@ -875,10 +877,6 @@ private void addMedical() {
 
 
 
-
-
-
-
     private void createMedicalTable() {
         String[] medcol = {"Medical ID","Student ID","Course Code","Date", "Description"};
         Object[][] data = {};
@@ -894,7 +892,7 @@ private void addMedical() {
 
 
 
-    /*
+
 
     private void viewAttendance() {
         DbConnector db = new DbConnector();
@@ -932,23 +930,13 @@ private void addMedical() {
         }
     }
 
-
-
-     */
-
-
-
-  /*  private void createAttendanceViewTable() {
-        String[] latent = {"Student ID","Course Code","Date", "Type","Present","Hours","Medical ID","Percentage"};
-        Object[][] data = {};
-
-        DefaultTableModel model = new DefaultTableModel(data, latent);
+    private void createAttendanceViewTable() {
+        String[] latent = {"Student ID", "Course Code", "Date", "Type", "Present", "Hours", "Medical Submitted"};
+        DefaultTableModel model = new DefaultTableModel(null, latent);
         view_atten_table.setModel(model);
-
     }
 
 
-   */
 
 
     private void viewMedical(){

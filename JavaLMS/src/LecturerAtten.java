@@ -16,6 +16,11 @@ public class LecturerAtten {
     private JButton viewMedicalButton;
     private JPanel cardpanel;
     private JPanel leftpanel;
+    private JPanel attendance;
+    private JPanel title;
+    private JPanel body;
+    private JPanel table;
+    private JScrollBar scrollBar1;
     private JTable showtable;
 
     public LecturerAtten() {
