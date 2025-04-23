@@ -79,6 +79,10 @@ public class Lecturer {
     private JPanel viewGradesAndGPAButtonPanel;
     private JPanel viewTimeTableButtonPanel;
     private JPanel viewStudentDetailsButtonPanel;
+    private JPanel titlePanel;
+    private JPanel lecNamePanel;
+    private JPanel logoutButtonPanel;
+    private JButton logoutButton;
 
 
     private String stuid;
