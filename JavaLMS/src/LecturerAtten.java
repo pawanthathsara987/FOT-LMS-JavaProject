@@ -20,7 +20,14 @@ public class LecturerAtten {
     private JPanel title;
     private JPanel body;
     private JPanel table;
+    private JPanel subcard;
+    private JPanel viewatten;
+    private JPanel viewmedical;
     private JScrollBar scrollBar1;
+    private JComboBox comboBox1;
+    private JButton attendanceButton1;
+    private JButton medicalButton;
+    private JTable aviewtable;
     private JTable showtable;
 
     public LecturerAtten() {
@@ -31,21 +38,20 @@ public class LecturerAtten {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        createUIComponents();
+        attendanceViewTable();
+    }
+
+    private void attendanceViewTable() {
+        String[] latent = {"Student ID", "Course Code", "Date", "Type", "Present", "Hours", "Medical Submitted"};
+        DefaultTableModel model = new DefaultTableModel(null, latent);
+        aviewtable.setModel(model);
     }
 
 
 
 
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-        String[] columns = {"Course ID", "Course Name", "Credit", "Type", "Level"};
-        Object[][] data = {}; // or populate from DB later
 
-        DefaultTableModel model = new DefaultTableModel(data, columns);
-        showtable.setModel(model);
-    }
 
     public static void main(String[] args) {
         new LecturerAtten();
