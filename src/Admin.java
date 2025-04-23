@@ -55,7 +55,7 @@ public class Admin {
     private JComboBox tdlevel;
     private JComboBox tddepartment;
     private JTextArea ndescription;
-    private JComboBox ndtitle;
+    private JTextField ndtitle;
     private JPanel ndelete_panel;
     private JPanel noticeformcard;
     private JPanel ncreate_panel;
@@ -415,7 +415,6 @@ public class Admin {
         //------------------------------------------------------------Notice----------------------------------------------------------------------------------------//
 
         ncreate_btn.setBackground(Color.GREEN);
-        showAvailableNoticeTitle();
         showNoticeDetails();
         showNoticeDetails();
 
@@ -430,7 +429,6 @@ public class Admin {
                 } else if (e.getSource() == ndelete_btn) {
                     ndelete_btn.setBackground(Color.GREEN);
                     ncreate_btn.setBackground(Color.WHITE);
-                    showAvailableNoticeTitle();
                     showNoticeDetails();
                 }
             }
@@ -457,6 +455,12 @@ public class Admin {
                 showTimeTableDetails();
             }
         };
+        noticeInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectRow();
+            }
+        });
     }
 
     //------------------------------------------------------------USER----------------------------------------------------------------------------------------//
@@ -1132,7 +1136,7 @@ public class Admin {
             return;
         }
 
-        String createCourse_sql = "INSERT INTO course (ccode, cname, ccredit, ctype, clevel, depid, lecuname) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String createCourse_sql = "INSERT INTO course (ccode, cname, ccredit, ctype, clevel, depid, lecusername) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try(PreparedStatement stmt = conn.prepareStatement(createCourse_sql)) {
             stmt.setString(1, ccode);
@@ -1211,10 +1215,10 @@ public class Admin {
                 return;
         }
 
-        String showCourseDetails_sql = "SELECT ccode, cname, ccredit, ctype, clevel, depid, lecuname FROM course WHERE clevel = ? AND depid = ?";
+        String showCourseDetails_sql = "SELECT ccode, cname, ccredit, ctype, clevel, depid, lecusername FROM course WHERE clevel = ? AND depid = ?";
 
         if (cdelete_btn.getBackground() == Color.GREEN) {
-            showCourseDetails_sql = "SELECT ccode, cname, ccredit, ctype, clevel, depid, lecuname FROM course ORDER BY clevel";
+            showCourseDetails_sql = "SELECT ccode, cname, ccredit, ctype, clevel, depid, lecusername FROM course ORDER BY clevel";
         }
 
 
@@ -1347,7 +1351,7 @@ public class Admin {
             return;
         }
 
-        String getlecname = "SELECT lecuname FROM course WHERE ccode = ?";
+        String getlecname = "SELECT lecusername FROM course WHERE ccode = ?";
 
         String createTimeTable_sql = "INSERT INTO timetable (level, depid, day, start_time, end_time, hall, cname, ctype, lec_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -1359,7 +1363,7 @@ public class Admin {
             ResultSet rs = stmt1.executeQuery();
 
             if (rs.next()) {
-                lecname = rs.getString("lecuname");
+                lecname = rs.getString("lecusername");
             }
 
             String dep_id = depid;
@@ -1538,7 +1542,7 @@ public class Admin {
 
     //delete notice when admin click delete button--------------------------------------------------------------------
     public void deleteNotice() {
-        String title = ndtitle.getSelectedItem().toString();
+        String title = ndtitle.getText();
 
         Connection conn = Database.DbConnector.getConnection();
         if (conn == null) {
@@ -1550,37 +1554,16 @@ public class Admin {
 
         try(PreparedStatement stmt = conn.prepareStatement(deleteNotice_sql)) {
             stmt.setString(1, title);
-            stmt.executeUpdate();
-            JOptionPane.showMessageDialog(frame, "Notice deleted successfully!");
-            showNoticeDetails();
-            showAvailableNoticeTitle();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error deleting notice: " + e.getMessage(), e);
-        }
-    }
+            int rs = stmt.executeUpdate();
 
-    //show available notice title in ndtitle combobox
-    public void showAvailableNoticeTitle() {
-
-        Connection conn = Database.DbConnector.getConnection();
-        if (conn == null) {
-            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
-            return;
-        }
-
-        String showAvailableNoticeTitle_sql = "SELECT title FROM notice";
-
-        try(PreparedStatement stmt = conn.prepareStatement(showAvailableNoticeTitle_sql)) {
-            ResultSet rs = stmt.executeQuery();
-
-            ndtitle.removeAllItems();
-
-            while(rs.next()) {
-                String ntitle = rs.getString("title");
-                ndtitle.addItem(ntitle);
+            if (rs > 0) {
+                JOptionPane.showMessageDialog(frame, "Notice deleted successfully!");
+                showNoticeDetails();
+            } else {
+                JOptionPane.showMessageDialog(frame, "There is no title " + title + " in notice table!");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error showing available notice title: " + e.getMessage(), e);
+            throw new RuntimeException("Error deleting notice: " + e.getMessage(), e);
         }
     }
 
@@ -1641,7 +1624,9 @@ public class Admin {
             dltuname.setText(userinfo.getValueAt(userinfo.getSelectedRow(), 1).toString());
         } else if (cdelete_btn.getBackground() == Color.GREEN) {
             cdcoursecode.setText(courseInfo.getValueAt(courseInfo.getSelectedRow(), 0).toString());
-        } else return;
+        } else if (ndelete_btn.getBackground() == Color.GREEN) {
+            ndtitle.setText(noticeInfo.getValueAt(noticeInfo.getSelectedRow(), 0).toString());
+        }
     }
 
 }
