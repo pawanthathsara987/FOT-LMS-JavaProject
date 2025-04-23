@@ -7,7 +7,7 @@ import javax.swing.table.TableColumnModel;
 
 public class StuNotice {
     private JPanel rootPanel;
-    private JTable table1;
+    private JTable showTable;
 
 
 
@@ -35,6 +35,7 @@ public class StuNotice {
                 data,
                 new String [] {"Date","Title","Download Link"}
         ));
+
         TableColumnModel columns = showTable.getColumnModel();
         columns.getColumn(0).setMinWidth(250);
 
