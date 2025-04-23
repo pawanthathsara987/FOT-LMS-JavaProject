@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class StudentAtten {
+public class StudentAttendance {
     private JPanel MainPanel;
     private JLabel name;
     private JLabel picture;
@@ -42,7 +42,7 @@ public class StudentAtten {
 
     private String stuUser;
 
-    public StudentAtten(String stuUser, String stuName) {
+    public StudentAttendance(String stuUser, String stuName) {
 
         stuname.setText(stuName);
         this.stuUser = stuUser;
@@ -403,6 +403,6 @@ public class StudentAtten {
 
 
     public static void main(String[] args) {
-        new StudentAtten("a0913", "John");
+        new StudentAttendance("a0913", "John");
     }
 }
