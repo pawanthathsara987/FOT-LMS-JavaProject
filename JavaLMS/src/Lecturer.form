@@ -26,9 +26,9 @@
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="0" indent="0" use-parent-layout="false">
-                <minimum-size width="300" height="100"/>
-                <preferred-size width="300" height="100"/>
-                <maximum-size width="300" height="100"/>
+                <minimum-size width="300" height="75"/>
+                <preferred-size width="300" height="75"/>
+                <maximum-size width="300" height="75"/>
               </grid>
             </constraints>
             <properties>
@@ -359,7 +359,7 @@
                         </constraints>
                         <properties>
                           <font size="20"/>
-                          <text value="Subject : "/>
+                          <text value="Course : "/>
                         </properties>
                       </component>
                       <component id="e2a0f" class="javax.swing.JLabel">
@@ -637,7 +637,7 @@
                     </constraints>
                     <properties>
                       <font size="20"/>
-                      <text value="Subject :"/>
+                      <text value="Course : "/>
                     </properties>
                   </component>
                   <hspacer id="63ca0">
@@ -896,7 +896,7 @@
                     </constraints>
                     <properties>
                       <font size="20"/>
-                      <text value="Subject :"/>
+                      <text value="Course : "/>
                     </properties>
                   </component>
                   <hspacer id="e34a6">
@@ -908,7 +908,7 @@
                       </grid>
                     </constraints>
                   </hspacer>
-                  <component id="52f05" class="javax.swing.JLabel">
+                  <component id="52f05" class="javax.swing.JLabel" binding="courseNameLabel">
                     <constraints>
                       <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -984,7 +984,7 @@
                     </constraints>
                     <properties>
                       <font size="18" style="0"/>
-                      <text value="Enter Course ID : "/>
+                      <text value="Select Course  : "/>
                     </properties>
                   </component>
                   <grid id="2e457" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -995,21 +995,21 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="b125f" class="javax.swing.JTextField" binding="stuCourseTextField">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                            <minimum-size width="200" height="25"/>
-                            <preferred-size width="200" height="25"/>
-                            <maximum-size width="200" height="25"/>
-                          </grid>
-                        </constraints>
-                        <properties/>
-                      </component>
                       <hspacer id="928f4">
                         <constraints>
                           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
                       </hspacer>
+                      <component id="31b33" class="javax.swing.JComboBox" binding="lecCourseComboBox">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                            <minimum-size width="200" height="-1"/>
+                            <preferred-size width="200" height="-1"/>
+                            <maximum-size width="200" height="-1"/>
+                          </grid>
+                        </constraints>
+                        <properties/>
+                      </component>
                     </children>
                   </grid>
                 </children>

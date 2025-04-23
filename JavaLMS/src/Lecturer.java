@@ -83,6 +83,8 @@ public class Lecturer {
     private JPanel lecNamePanel;
     private JPanel logoutButtonPanel;
     private JButton logoutButton;
+    private JComboBox lecCourseComboBox;
+    private JLabel courseNameLabel;
 
 
     private String stuid;
@@ -95,7 +97,7 @@ public class Lecturer {
     private String lecUsername;
     private String depid;
 
-    private int stuLevel;
+    private String stuLevel1;
 
     private Connection conn = null;
     private Statement stmt = null;
@@ -114,6 +116,7 @@ public class Lecturer {
         lecNameLabel.setText(lecName);
         this.lecUsername = lecUsername;
 
+        //Add Lec Materials
         addLectureMaterialButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -123,7 +126,70 @@ public class Lecturer {
                 parentPanel.revalidate();
             }
         });
+        uploadLecNoteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                int result = chooser.showOpenDialog(null);
 
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File lecNote = chooser.getSelectedFile();
+                    String stuLevel = (String) stuLevelComboBox.getSelectedItem();
+                    String lecWeek = (String) lecWeekComboBox.getSelectedItem();
+
+                    if (!stuLevel.equals("") && !lecWeek.equals("")) {
+                        saveLecNote(lecNote,stuLevel,lecWeek);
+                    }else {
+                        JOptionPane.showMessageDialog(null, "Please select both level and week.");
+                    }
+                }
+            }
+
+            public void saveLecNote(File file, String stuLevel, String lecWeek){
+
+                File destination = new File("JavaProject/");
+                if(!destination.exists()){
+                    destination.mkdir();
+                }
+
+
+                try {
+                    String destinationPath = destination.getAbsolutePath() + "/" + file.getName();
+                    Files.copy(file.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
+
+                    DbConnector db = new DbConnector();
+                    conn = db.getConnection();
+
+                    String sql = "INSERT INTO lecture_material(level,week,file_name,file_path) VALUES (?,?,?,?)";
+                    try {
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, stuLevel);
+                        pstmt.setString(2, lecWeek);
+                        pstmt.setString(3, file.getName());
+                        pstmt.setString(4, destinationPath);
+                        int rows = pstmt.executeUpdate();
+                        if (rows > 0) {
+                            JOptionPane.showMessageDialog(null, "Lecture note uploaded successfully!");
+                        }
+                    } catch (SQLException e) {
+                        System.out.println("Statement error: " + e.getMessage());
+                    }
+
+                } catch (IOException e) {
+                    System.out.println("File could not be copied" + e.getMessage());
+                }
+
+            }
+        });
+        uploadAssingmentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser();
+                chooser.showOpenDialog(null);
+            }
+        });
+
+        //Update Marks
         UpdateMarksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,57 +199,6 @@ public class Lecturer {
                 parentPanel.revalidate();
             }
         });
-
-        addMarksButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parentPanel.removeAll();
-                parentPanel.add(addMarksPanel);
-                parentPanel.repaint();
-                parentPanel.revalidate();
-            }
-        });
-
-        viewStudentEligibilityButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parentPanel.removeAll();
-                parentPanel.add(viewStuEligibilityPanel);
-                parentPanel.repaint();
-                parentPanel.revalidate();
-            }
-        });
-
-        viewTimeTableButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parentPanel.removeAll();
-                parentPanel.add(viewTimeTablePanel);
-                parentPanel.repaint();
-                parentPanel.revalidate();
-            }
-        });
-
-        viewStudentDetailsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parentPanel.removeAll();
-                parentPanel.add(viewStudentDetailsPanel);
-                parentPanel.repaint();
-                parentPanel.revalidate();
-            }
-        });
-
-        viewGradesAndGPAButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parentPanel.removeAll();
-                parentPanel.add(viewGradesAndGPA);
-                parentPanel.repaint();
-                parentPanel.revalidate();
-            }
-        });
-
         updateMarksButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -288,11 +303,126 @@ public class Lecturer {
             }
         });
 
+        //ADD MARKS
+        addMarksButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parentPanel.removeAll();
+                parentPanel.add(addMarksPanel);
+                parentPanel.repaint();
+                parentPanel.revalidate();
+
+                showLecturerCourses();
+            }
+
+            public void showLecturerCourses(){
+                lecCourseComboBox.removeAllItems();
+
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String sql = "SELECT ccode FROM course WHERE lecusername = ?";
+
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, lecUsername);
+                    ResultSet rs = pstmt.executeQuery();
+
+                    while (rs.next()) {
+                        String ccode = rs.getString("ccode");
+                        lecCourseComboBox.addItem(ccode);
+                    }
+
+                    rs.close();
+                    pstmt.close();
+                    conn.close();
+
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+
+            }
+        });
+        lecCourseComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showCourseName();
+                loadMarks();
+            }
+            public void showCourseName(){
+                if (lecCourseComboBox.getSelectedItem() == null) return;
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+                String courseCode = lecCourseComboBox.getSelectedItem().toString();
+
+                String sql = "SELECT * FROM course WHERE ccode = ?";
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, courseCode);
+                    ResultSet rs = pstmt.executeQuery();
+
+                    while (rs.next()) {
+                        String cname = rs.getString("cname");
+                        courseNameLabel.setText(cname);
+                    }
+
+                    rs.close();
+                    pstmt.close();
+                    conn.close();
+
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+
+            public void loadMarks(){
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String sql = "select * from mark WHERE ccode = ?";
+
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, lecCourseComboBox.getSelectedItem().toString());
+                    ResultSet rs = pstmt.executeQuery();
+
+                    String[] columnNames2 = {"Stu_ID", "Cour_Code", "Quiz 1", "Quiz 2", "Quiz 3", "Assignments", "Mid Marks", "End Theory", "End Practical"};
+                    DefaultTableModel model2 = new DefaultTableModel(columnNames2,0);
+
+                    while (rs.next()) {
+                        Object[] row = {
+                                rs.getString("stuid"),
+                                rs.getString("ccode"),
+                                rs.getDouble("quiz_1"),
+                                rs.getDouble("quiz_2"),
+                                rs.getDouble("quiz_3"),
+                                rs.getDouble("assesment"),
+                                rs.getDouble("m_marks"),
+                                rs.getDouble("f_theory"),
+                                rs.getDouble("f_practical")
+                        };
+                        model2.addRow(row);
+                    }
+
+                    addStudentMarksTable.setModel(model2);
+                    addStudentMarksTable.repaint();
+                    addStudentMarksTable.revalidate();
+
+                    stuIDTextField.setText("");
+                    stuMarksField.setText("");
+                    addMarkTypeComboBox.setSelectedIndex(0);
+
+                } catch (SQLException e) {
+                    System.out.println("Statement error: " + e.getMessage());
+                }
+            }
+
+        });
         addMarksButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 stuid2 = stuIDTextField.getText().trim();
-                courseID = stuCourseTextField.getText().trim();
+                courseID = lecCourseComboBox.getSelectedItem().toString();
                 markType2 = addMarkTypeComboBox.getSelectedItem().toString();
                 marksValue2 = stuMarksField.getText();
 
@@ -360,15 +490,15 @@ public class Lecturer {
 
                     while (rs.next()) {
                         Object[] row = {
-                              rs.getString("stuid"),
-                              rs.getString("ccode"),
-                              rs.getDouble("quiz_1"),
-                              rs.getDouble("quiz_2"),
-                              rs.getDouble("quiz_3"),
-                              rs.getDouble("assesment"),
-                              rs.getDouble("m_marks"),
-                              rs.getDouble("f_theory"),
-                              rs.getDouble("f_practical")
+                                rs.getString("stuid"),
+                                rs.getString("ccode"),
+                                rs.getDouble("quiz_1"),
+                                rs.getDouble("quiz_2"),
+                                rs.getDouble("quiz_3"),
+                                rs.getDouble("assesment"),
+                                rs.getDouble("m_marks"),
+                                rs.getDouble("f_theory"),
+                                rs.getDouble("f_practical")
                         };
                         model2.addRow(row);
                     }
@@ -389,14 +519,46 @@ public class Lecturer {
             }
         });
 
+        viewStudentEligibilityButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parentPanel.removeAll();
+                parentPanel.add(viewStuEligibilityPanel);
+                parentPanel.repaint();
+                parentPanel.revalidate();
+            }
+        });
+
+        viewTimeTableButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parentPanel.removeAll();
+                parentPanel.add(viewTimeTablePanel);
+                parentPanel.repaint();
+                parentPanel.revalidate();
+            }
+        });
+
+        viewGradesAndGPAButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parentPanel.removeAll();
+                parentPanel.add(viewGradesAndGPA);
+                parentPanel.repaint();
+                parentPanel.revalidate();
+            }
+        });
+
+        //View Students Details
         studentLevelComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                stuLevel = studentLevelComboBox.getSelectedIndex();
+                stuLevel1 = (String) studentLevelComboBox.getSelectedItem();
+                System.out.println(stuLevel1);
 
-                if (stuLevel != 0) {
+                if (!stuLevel1.equals("") || !stuLevel1.equals(null)) {
                     showLecturerDetails();
-                    showStudentDetails(stuLevel);
+                    showStudentDetails(stuLevel1);
                 }
             }
 
@@ -413,42 +575,42 @@ public class Lecturer {
 
                     if (rs.next()) {
                         depid = rs.getString("depid");
+                        System.out.println(depid);
                     }
-
 
                 } catch (SQLException e) {
                     System.out.println("Statement error: " + e.getMessage());
                 }
             }
 
-            public void showStudentDetails(int stuLevel){
+            public void showStudentDetails(String stuLevel){
                 DbConnector db = new DbConnector();
                 conn = db.getConnection();
+                String level = stuLevel;
 
-                String sql = "SELECT * FROM student WHERE stu_level=? AND depid = ?";
+                String sql = "SELECT * FROM student WHERE stulevel=? AND depid = ?";
 
                 try {
                     PreparedStatement pstmt = conn.prepareStatement(sql);
-                    pstmt.setInt(1, stuLevel);
+                    pstmt.setString(1, level);
                     pstmt.setString(2, depid);
                     ResultSet rs = pstmt.executeQuery();
 
-                    String[] columnNames = {"stuid","depid","username","password","fname","lname","email","dob","pnumber","ppicture","stu_level"};
+                    String[] columnNames = {"stuid","username","fname","lname","email","dob","pnumber","stulevel","ppicture","depid"};
                     DefaultTableModel model = new DefaultTableModel(columnNames,0);
 
                     while (rs.next()) {
                         Object[] row = {
                                 rs.getString("stuid"),
-                                rs.getString("depid"),
                                 rs.getString("username"),
-                                rs.getString("password"),
                                 rs.getString("fname"),
                                 rs.getString("lname"),
                                 rs.getString("email"),
                                 rs.getString("dob"),
                                 rs.getString("pnumber"),
+                                rs.getString("stulevel"),
                                 rs.getString("ppicture"),
-                                rs.getInt("stu_level")
+                                rs.getString("depid")
                         };
                         model.addRow(row);
 
@@ -461,68 +623,13 @@ public class Lecturer {
                 }
             }
         });
-
-        uploadLecNoteButton.addActionListener(new ActionListener() {
+        viewStudentDetailsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                int result = chooser.showOpenDialog(null);
-
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File lecNote = chooser.getSelectedFile();
-                    String stuLevel = (String) stuLevelComboBox.getSelectedItem();
-                    String lecWeek = (String) lecWeekComboBox.getSelectedItem();
-
-                    if (!stuLevel.equals("") && !lecWeek.equals("")) {
-                        saveLecNote(lecNote,stuLevel,lecWeek);
-                    }else {
-                        JOptionPane.showMessageDialog(null, "Please select both level and week.");
-                    }
-                }
-            }
-
-            public void saveLecNote(File file, String stuLevel, String lecWeek){
-
-                File destination = new File("JavaProject/");
-                if(!destination.exists()){
-                    destination.mkdir();
-                }
-
-
-                try {
-                    String destinationPath = destination.getAbsolutePath() + "/" + file.getName();
-                    Files.copy(file.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
-
-                    DbConnector db = new DbConnector();
-                    conn = db.getConnection();
-
-                    String sql = "INSERT INTO lecture_material(level,week,file_name,file_path) VALUES (?,?,?,?)";
-                    try {
-                        PreparedStatement pstmt = conn.prepareStatement(sql);
-                        pstmt.setString(1, stuLevel);
-                        pstmt.setString(2, lecWeek);
-                        pstmt.setString(3, file.getName());
-                        pstmt.setString(4, destinationPath);
-                        int rows = pstmt.executeUpdate();
-                        if (rows > 0) {
-                            JOptionPane.showMessageDialog(null, "Lecture note uploaded successfully!");
-                        }
-                    } catch (SQLException e) {
-                        System.out.println("Statement error: " + e.getMessage());
-                    }
-
-                } catch (IOException e) {
-                    System.out.println("File could not be copied" + e.getMessage());
-                }
-
-            }
-        });
-
-        uploadAssingmentButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser = new JFileChooser();
-                chooser.showOpenDialog(null);
+                parentPanel.removeAll();
+                parentPanel.add(viewStudentDetailsPanel);
+                parentPanel.repaint();
+                parentPanel.revalidate();
             }
         });
 
