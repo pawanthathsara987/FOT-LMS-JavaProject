@@ -47,7 +47,6 @@ public class TechOfficer {
     private JButton editButton2;
     private JButton deleteButton3;
     private JButton atten_submitButton;
-    private JTextField textField4;
     private JButton atten_deleteButton;
     private JComboBox aetype_combo;
     private JComboBox aepre_combo;
@@ -101,7 +100,6 @@ public class TechOfficer {
     private JLabel mededate;
     private JLabel mededes;
     private JLabel medtitlelabel;
-    private JTextField textField1;
     private JButton deleteButton2;
     private JButton medsubmit;
     private JButton aeselect;
@@ -128,7 +126,6 @@ public class TechOfficer {
     private JTextField semedstu;
     private JTextField semedcour;
     private JButton medsebtn;
-    private JButton button2;
     private JTextField medid;
     private JButton dmedselect;
     private JButton attenselect;
@@ -336,6 +333,12 @@ public class TechOfficer {
             public void actionPerformed(ActionEvent e) {
                 deleteMedicalRecord();
                 loadMedicalTable();
+            }
+        });
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadAttendanceTable();
             }
         });
     }
@@ -649,19 +652,40 @@ private void addMedical() {
     date = medtextdate.getText().trim();
     des = medtextdes.getText();
 
-
     // Validate input
     if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || des == null ) {
         JOptionPane.showMessageDialog(null, "Please fill in all fields.");
         return;
     }
 
-
-    String sql = "INSERT INTO medical (stuid, ccode, mdate, mdescription) VALUES (?, ?, ?, ?)";
+    // Check if the student has an absent status for that date and course
+    String checkStatusSql = "SELECT present FROM attendance WHERE stuid = ? AND ccode = ? AND sdate = ?";
 
     try {
         DbConnector db = new DbConnector();
         Connection conn = db.getConnection();
+        PreparedStatement checkStmt = conn.prepareStatement(checkStatusSql);
+        checkStmt.setString(1, stuid);
+        checkStmt.setString(2, course);
+        checkStmt.setDate(3, Date.valueOf(date));
+
+        ResultSet rs = checkStmt.executeQuery();
+
+        if (rs.next()) {
+            int presentStatus = rs.getInt("present");
+
+            // If the student is not absent (present status is not 0), do not allow adding medical
+            if (presentStatus != 0) {
+                JOptionPane.showMessageDialog(null, "Medical can only be added for absent students.");
+                return;
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No attendance record found for the given student, course, and date.");
+            return;
+        }
+
+        // Insert the medical record
+        String sql = "INSERT INTO medical (stuid, ccode, mdate, mdescription) VALUES (?, ?, ?, ?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
 
         pstmt.setString(1, stuid);
@@ -669,16 +693,23 @@ private void addMedical() {
         pstmt.setDate(3, Date.valueOf(date)); // Ensure date is in YYYY-MM-DD format
         pstmt.setString(4, des);
 
-         // msubmit is initially 0 unless medical is submitted
-
         pstmt.executeUpdate();
 
+        // Update the attendance to set msubmit = 1 (medical submitted) for that record
+        String updateSql = "UPDATE attendance SET msubmit = 1 WHERE stuid = ? AND ccode = ? AND sdate = ? AND present = 0";
+        PreparedStatement updateStmt = conn.prepareStatement(updateSql);
+        updateStmt.setString(1, stuid);
+        updateStmt.setString(2, course);
+        updateStmt.setDate(3, Date.valueOf(date));
+        updateStmt.executeUpdate();
+
+        updateStmt.close();
         pstmt.close();
         conn.close();
 
         JOptionPane.showMessageDialog(null, "Medical added successfully!");
         clearMedicalFields();
-        createMedicalTable();// Refresh the table
+        createMedicalTable(); // Refresh the table
 
     } catch (SQLException e) {
         e.printStackTrace();
@@ -687,6 +718,7 @@ private void addMedical() {
         JOptionPane.showMessageDialog(null, "Invalid date format. Use YYYY-MM-DD.");
     }
 }
+
 
 
     private void loadMedicalTable() {
@@ -858,7 +890,7 @@ private void addMedical() {
             conn.close();
 
             if (deleted > 0) {
-                JOptionPane.showMessageDialog(null, "MEdical record deleted successfully!");
+                JOptionPane.showMessageDialog(null, "Medical record deleted successfully!");
                 loadAttendanceTable(); // Refresh table
             } else {
                 JOptionPane.showMessageDialog(null, "Delete failed. Record not found.");

@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,8 +73,7 @@ public class StudentAttendance {
         medicalButton.addActionListener(e -> cardlayout.show(subcard,"card3"));
 
 
-        // Initialize the table
-        attendanceViewTable();
+
         // Load courses for the student
         loadCoursesForStudentAtten();
 
@@ -164,7 +164,12 @@ public class StudentAttendance {
     private void attendanceView() {
         String[] columnNames = {"Student ID", "Course Code", "Attendance %"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        aviewtable.setModel(model);
+        showtable.setModel(model);
+
+        JTableHeader header = showtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
 
         String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
 
@@ -203,7 +208,12 @@ public class StudentAttendance {
     private void show15WeekAttendance() {
         String[] columns = {"Week", "Date", "Type", "Status", "Hours", "Medical Submitted"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
-        showtable.setModel(model);
+        aviewtable.setModel(model);
+
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
 
         String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
 
@@ -245,54 +255,16 @@ public class StudentAttendance {
 
 
 
-    /*private void show15WeekMedical() {
-        String[] columns = {"Week", "Date", "Type", "Hours"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0);
-        showtable.setModel(model);
-
-        String selectedCourse = medselectcour.getSelectedItem() != null ? medselectcour.getSelectedItem().toString() : "";
-
-        if (selectedCourse.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please select a course.");
-            return;
-        }
-
-        try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
-
-            CallableStatement stmt = conn.prepareCall("{CALL ShowStudent15WeekMedical(?, ?)}");
-            stmt.setString(1, stuUser);
-            stmt.setString(2, selectedCourse);
-
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                        rs.getInt("week"),
-                        rs.getDate("date"),
-                        rs.getString("ctype"),
-                        rs.getInt("hours"),
-                       // rs.getObject("medid") // will show NULL if not submitted
-                });
-            }
-
-            stmt.close();
-            db.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error showing 15-week medical attendance.");
-        }
-    }
-
-     */
-
 
     private void medicalView() {
         String[] columnNames = {"Student ID", "Course Code", "Attendance %"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        aviewtable.setModel(model);
+        showtable.setModel(model);
+
+        JTableHeader header = showtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
 
         String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
 
@@ -331,7 +303,12 @@ public class StudentAttendance {
     private void show15WeekMedical() {
         String[] columns = {"Week", "Date", "Type", "Hours", "Status", "Medical Submitted"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
-        showtable.setModel(model);
+        aviewtable.setModel(model);
+
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
 
         String selectedCourse = medselectcour.getSelectedItem() != null ? medselectcour.getSelectedItem().toString() : "";
 
@@ -394,12 +371,7 @@ public class StudentAttendance {
 
 
 
-    private void attendanceViewTable() {
-        // Initialize table with column names
-        String[] latent = {"Student ID", "Course Code", "Date", "Type", "Present", "Hours", "Medical Submitted"};
-        DefaultTableModel model = new DefaultTableModel(null, latent);
-        aviewtable.setModel(model);
-    }
+
 
 
     public static void main(String[] args) {
