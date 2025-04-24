@@ -85,6 +85,8 @@ public class Lecturer {
     private JButton logoutButton;
     private JComboBox lecCourseComboBox;
     private JLabel courseNameLabel;
+    private JComboBox selectLecCourseComboBox;
+    private JLabel LecCourseNameLabel;
 
 
     private String stuid;
@@ -199,10 +201,11 @@ public class Lecturer {
                 parentPanel.revalidate();
             }
         });
+
         updateMarksButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                stuid = stuIDField.getText().trim();
+                stuid = stuIDField.getText().trim().toUpperCase();
                 marksValue = enteredMarksField.getText();
                 markType = updateMarkTypeComboBox.getSelectedItem().toString();
 
@@ -259,12 +262,9 @@ public class Lecturer {
                 }
             }
 
-
             public void loadMarks(){
                 DbConnector db = new DbConnector();
                 conn = db.getConnection();
-
-                System.out.println("loadMarks() called...");
 
                 String sql = "select * from mark";
 
@@ -303,6 +303,40 @@ public class Lecturer {
             }
         });
 
+        selectLecCourseComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showCourseName();
+            }
+
+            public void showCourseName(){
+                if (lecCourseComboBox.getSelectedItem() == null) return;
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+                String courseCode = lecCourseComboBox.getSelectedItem().toString();
+
+                String sql = "SELECT * FROM course WHERE ccode = ?";
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, courseCode);
+                    ResultSet rs = pstmt.executeQuery();
+
+                    while (rs.next()) {
+                        String cname = rs.getString("cname");
+                        courseNameLabel.setText(cname);
+                        LecCourseNameLabel.setText(cname);
+                    }
+
+                    rs.close();
+                    pstmt.close();
+                    conn.close();
+
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        });
+
         //ADD MARKS
         addMarksButton.addActionListener(new ActionListener() {
             @Override
@@ -312,7 +346,9 @@ public class Lecturer {
                 parentPanel.repaint();
                 parentPanel.revalidate();
 
-                showLecturerCourses();
+                if(lecCourseComboBox.getSelectedItem() == null) {
+                    showLecturerCourses();
+                }
             }
 
             public void showLecturerCourses(){
@@ -327,6 +363,8 @@ public class Lecturer {
                     PreparedStatement pstmt = conn.prepareStatement(sql);
                     pstmt.setString(1, lecUsername);
                     ResultSet rs = pstmt.executeQuery();
+
+                    lecCourseComboBox.removeAllItems();
 
                     while (rs.next()) {
                         String ccode = rs.getString("ccode");
@@ -343,41 +381,17 @@ public class Lecturer {
 
             }
         });
+
         lecCourseComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showCourseName();
                 loadMarks();
             }
-            public void showCourseName(){
-                if (lecCourseComboBox.getSelectedItem() == null) return;
-                DbConnector db = new DbConnector();
-                conn = db.getConnection();
-                String courseCode = lecCourseComboBox.getSelectedItem().toString();
-
-                String sql = "SELECT * FROM course WHERE ccode = ?";
-                try {
-                    PreparedStatement pstmt = conn.prepareStatement(sql);
-                    pstmt.setString(1, courseCode);
-                    ResultSet rs = pstmt.executeQuery();
-
-                    while (rs.next()) {
-                        String cname = rs.getString("cname");
-                        courseNameLabel.setText(cname);
-                    }
-
-                    rs.close();
-                    pstmt.close();
-                    conn.close();
-
-                } catch (SQLException ex) {
-                    System.out.println(ex.getMessage());
-                }
-            }
-
             public void loadMarks(){
                 DbConnector db = new DbConnector();
                 conn = db.getConnection();
+
 
                 String sql = "select * from mark WHERE ccode = ?";
 
@@ -404,6 +418,7 @@ public class Lecturer {
                         model2.addRow(row);
                     }
 
+
                     addStudentMarksTable.setModel(model2);
                     addStudentMarksTable.repaint();
                     addStudentMarksTable.revalidate();
@@ -417,11 +432,37 @@ public class Lecturer {
                 }
             }
 
+            public void showCourseName(){
+                if (lecCourseComboBox.getSelectedItem() == null) return;
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+                String courseCode = lecCourseComboBox.getSelectedItem().toString();
+
+                String sql = "SELECT * FROM course WHERE ccode = ?";
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, courseCode);
+                    ResultSet rs = pstmt.executeQuery();
+
+                    while (rs.next()) {
+                        String cname = rs.getString("cname");
+                        courseNameLabel.setText(cname);
+                    }
+
+                    rs.close();
+                    pstmt.close();
+                    conn.close();
+
+                } catch (SQLException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
         });
+
         addMarksButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                stuid2 = stuIDTextField.getText().trim();
+                stuid2 = stuIDTextField.getText().trim().toUpperCase();
                 courseID = lecCourseComboBox.getSelectedItem().toString();
                 markType2 = addMarkTypeComboBox.getSelectedItem().toString();
                 marksValue2 = stuMarksField.getText();
@@ -477,12 +518,11 @@ public class Lecturer {
                 DbConnector db = new DbConnector();
                 conn = db.getConnection();
 
-                System.out.println("loadMarks() called...");
-
-                String sql = "select * from mark";
+                String sql = "select * from mark where ccode = ?";
 
                 try {
                     PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, courseID);
                     ResultSet rs = pstmt.executeQuery();
 
                     String[] columnNames2 = {"Stu_ID", "Cour_Code", "Quiz 1", "Quiz 2", "Quiz 3", "Assignments", "Mid Marks", "End Theory", "End Practical"};
@@ -509,7 +549,7 @@ public class Lecturer {
 
                     stuIDTextField.setText("");
                     stuMarksField.setText("");
-                    stuCourseTextField.setText("");
+                   // stuCourseTextField.setText("");
                     addMarkTypeComboBox.setSelectedIndex(0);
 
                 } catch (SQLException e) {
@@ -582,7 +622,6 @@ public class Lecturer {
                     System.out.println("Statement error: " + e.getMessage());
                 }
             }
-
             public void showStudentDetails(String stuLevel){
                 DbConnector db = new DbConnector();
                 conn = db.getConnection();
@@ -634,4 +673,251 @@ public class Lecturer {
         });
 
     }
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+//    public void showLecturerCourses(){
+//        lecCourseComboBox.removeAllItems();
+//
+//        DbConnector db = new DbConnector();
+//        conn = db.getConnection();
+//
+//        String sql = "SELECT ccode FROM course WHERE lecusername = ?";
+//
+//        try {
+//            PreparedStatement pstmt = conn.prepareStatement(sql);
+//            pstmt.setString(1, lecUsername);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            while (rs.next()) {
+//                String ccode = rs.getString("ccode");
+//                lecCourseComboBox.addItem(ccode);
+//            }
+//
+//            rs.close();
+//            pstmt.close();
+//            conn.close();
+//
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//
+//    }
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+//    public void showCourseName(){
+//        if (lecCourseComboBox.getSelectedItem() == null) return;
+//        DbConnector db = new DbConnector();
+//        conn = db.getConnection();
+//        String courseCode = lecCourseComboBox.getSelectedItem().toString();
+//
+//        String sql = "SELECT * FROM course WHERE ccode = ?";
+//        try {
+//            PreparedStatement pstmt = conn.prepareStatement(sql);
+//            pstmt.setString(1, courseCode);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            while (rs.next()) {
+//                String cname = rs.getString("cname");
+//                courseNameLabel.setText(cname);
+//                LecCourseNameLabel.setText(cname);
+//            }
+//
+//            rs.close();
+//            pstmt.close();
+//            conn.close();
+//
+//        } catch (SQLException ex) {
+//            System.out.println(ex.getMessage());
+//        }
+//    }
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+//    public void loadMarks(){
+//        DbConnector db = new DbConnector();
+//        conn = db.getConnection();
+//
+//        String courseCode = null;
+//        courseCode = lecCourseComboBox.getSelectedItem().toString() == null ? "" : lecCourseComboBox.getSelectedItem().toString();
+//
+//
+//        String sql = "select * from mark WHERE ccode = ?";
+//
+//        try {
+//            PreparedStatement pstmt = conn.prepareStatement(sql);
+//            pstmt.setString(1, courseCode);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            String[] columnNames2 = {"Stu_ID", "Cour_Code", "Quiz 1", "Quiz 2", "Quiz 3", "Assignments", "Mid Marks", "End Theory", "End Practical"};
+//            DefaultTableModel model2 = new DefaultTableModel(columnNames2,0);
+//
+//            while (rs.next()) {
+//                Object[] row = {
+//                        rs.getString("stuid"),
+//                        rs.getString("ccode"),
+//                        rs.getDouble("quiz_1"),
+//                        rs.getDouble("quiz_2"),
+//                        rs.getDouble("quiz_3"),
+//                        rs.getDouble("assesment"),
+//                        rs.getDouble("m_marks"),
+//                        rs.getDouble("f_theory"),
+//                        rs.getDouble("f_practical")
+//                };
+//                model2.addRow(row);
+//            }
+//
+//
+//            addStudentMarksTable.setModel(model2);
+//            addStudentMarksTable.repaint();
+//            addStudentMarksTable.revalidate();
+//
+//            stuIDTextField.setText("");
+//            stuMarksField.setText("");
+//            addMarkTypeComboBox.setSelectedIndex(0);
+//
+//
+//
+//
+//
+//        } catch (SQLException e) {
+//            System.out.println("Statement error: " + e.getMessage());
+//        }
+//    }
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+//    public void addStuMarks(String stuid2, String courseID, String markType2, double marks){
+//        DbConnector db = new DbConnector();
+//        conn = db.getConnection();
+//
+//        Map<String,String> columns = new HashMap<>();
+//        columns.put("Quiz 1","quiz_1");
+//        columns.put("Quiz 2","quiz_2");
+//        columns.put("Quiz 3","quiz_3");
+//        columns.put("Assignment Marks","assesment");
+//        columns.put("Mid Exam Marks","m_marks");
+//        columns.put("End Theory Marks","f_theory");
+//        columns.put("End Practical Marks","f_practical");
+//
+//        String columnName = columns.get(markType2);
+//
+//        if (columnName != null) {
+//            String sql = "INSERT INTO mark(stuid,ccode," + columnName + ") VALUES (?,?,?)";
+//            try {
+//                PreparedStatement pstmt = conn.prepareStatement(sql);
+//                pstmt.setString(1, stuid2);
+//                pstmt.setString(2, courseID);
+//                pstmt.setDouble(3, marks);
+//                int rows = pstmt.executeUpdate();
+//                if (rows > 0) {
+//                    loadAddMarksTable();
+//                    JOptionPane.showMessageDialog(null, "Mark Insertion successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+//                }
+//            } catch (SQLException e) {
+//                System.out.println("Statement error: " + e.getMessage());
+//                JOptionPane.showMessageDialog(null, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//            }
+//        }
+//    }
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+//    public void loadAddMarksTable(){
+//        DbConnector db = new DbConnector();
+//        conn = db.getConnection();
+//
+//        System.out.println("loadMarks() called...");
+//
+//        String sql = "select * from mark";
+//
+//        try {
+//            PreparedStatement pstmt = conn.prepareStatement(sql);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            String[] columnNames2 = {"Stu_ID", "Cour_Code", "Quiz 1", "Quiz 2", "Quiz 3", "Assignments", "Mid Marks", "End Theory", "End Practical"};
+//            DefaultTableModel model2 = new DefaultTableModel(columnNames2,0);
+//
+//            while (rs.next()) {
+//                Object[] row = {
+//                        rs.getString("stuid"),
+//                        rs.getString("ccode"),
+//                        rs.getDouble("quiz_1"),
+//                        rs.getDouble("quiz_2"),
+//                        rs.getDouble("quiz_3"),
+//                        rs.getDouble("assesment"),
+//                        rs.getDouble("m_marks"),
+//                        rs.getDouble("f_theory"),
+//                        rs.getDouble("f_practical")
+//                };
+//                model2.addRow(row);
+//            }
+//
+//            addStudentMarksTable.setModel(model2);
+//            addStudentMarksTable.repaint();
+//            addStudentMarksTable.revalidate();
+//
+//            stuIDTextField.setText("");
+//            stuMarksField.setText("");
+//            stuCourseTextField.setText("");
+//            addMarkTypeComboBox.setSelectedIndex(0);
+//
+//        } catch (SQLException e) {
+//            System.out.println("Statement error: " + e.getMessage());
+//        }
+//
+//    }
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+//    public void showLecturerDetails() {
+//        DbConnector db = new DbConnector();
+//        conn = db.getConnection();
+//
+//        String sql = "SELECT * FROM lecturer WHERE username =?";
+//
+//        try {
+//            PreparedStatement pstmt = conn.prepareStatement(sql);
+//            pstmt.setString(1, lecUsername);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            if (rs.next()) {
+//                depid = rs.getString("depid");
+//                System.out.println(depid);
+//            }
+//
+//        } catch (SQLException e) {
+//            System.out.println("Statement error: " + e.getMessage());
+//        }
+//    }
+    //------------------------------------------------------------------------------------------------------------------------------------------------
+//    public void showStudentDetails(String stuLevel){
+//        DbConnector db = new DbConnector();
+//        conn = db.getConnection();
+//        String level = stuLevel;
+//
+//        String sql = "SELECT * FROM student WHERE stulevel=? AND depid = ?";
+//
+//        try {
+//            PreparedStatement pstmt = conn.prepareStatement(sql);
+//            pstmt.setString(1, level);
+//            pstmt.setString(2, depid);
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            String[] columnNames = {"stuid","username","fname","lname","email","dob","pnumber","stulevel","ppicture","depid"};
+//            DefaultTableModel model = new DefaultTableModel(columnNames,0);
+//
+//            while (rs.next()) {
+//                Object[] row = {
+//                        rs.getString("stuid"),
+//                        rs.getString("username"),
+//                        rs.getString("fname"),
+//                        rs.getString("lname"),
+//                        rs.getString("email"),
+//                        rs.getString("dob"),
+//                        rs.getString("pnumber"),
+//                        rs.getString("stulevel"),
+//                        rs.getString("ppicture"),
+//                        rs.getString("depid")
+//                };
+//                model.addRow(row);
+//
+//                studentDetailsTable.setModel(model);
+//                studentDetailsTable.repaint();
+//                studentDetailsTable.validate();
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Statement error: " + e.getMessage());
+//        }
+//    }
 }
