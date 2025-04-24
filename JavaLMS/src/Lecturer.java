@@ -87,6 +87,7 @@ public class Lecturer {
     private JLabel courseNameLabel;
     private JComboBox selectLecCourseComboBox;
     private JLabel LecCourseNameLabel;
+    private JLabel courNameLabel;
 
 
     private String stuid;
@@ -98,6 +99,7 @@ public class Lecturer {
     private String markType2;
     private String lecUsername;
     private String depid;
+    private String courCode;
 
     private String stuLevel1;
 
@@ -199,6 +201,35 @@ public class Lecturer {
                 parentPanel.add(updateMarksPanel);
                 parentPanel.repaint();
                 parentPanel.revalidate();
+
+                if(selectLecCourseComboBox.getSelectedItem() == null) {
+                    showLecturerCourses2();
+                }
+            }
+
+            public void showLecturerCourses2(){
+                selectLecCourseComboBox.removeAllItems();
+
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String sql = "SELECT ccode FROM course WHERE lecusername=?";
+
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, lecUsername);
+                    ResultSet rs = pstmt.executeQuery();
+
+                    while (rs.next()) {
+                        String ccode = rs.getString("ccode");
+                        selectLecCourseComboBox.addItem(ccode);
+                    }
+                    rs.close();
+                    pstmt.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    System.out.println("Statement error: " + e.getMessage());
+                }
             }
         });
 
@@ -206,6 +237,7 @@ public class Lecturer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 stuid = stuIDField.getText().trim().toUpperCase();
+                courCode = selectLecCourseComboBox.getSelectedItem().toString();
                 marksValue = enteredMarksField.getText();
                 markType = updateMarkTypeComboBox.getSelectedItem().toString();
 
@@ -266,10 +298,11 @@ public class Lecturer {
                 DbConnector db = new DbConnector();
                 conn = db.getConnection();
 
-                String sql = "select * from mark";
+                String sql = "select * from mark where ccode = ?";
 
                 try {
                     PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, courCode);
                     ResultSet rs = pstmt.executeQuery();
 
                     String[] columnNames = {"Stu_ID", "Cour_Code", "Quiz 1", "Quiz 2", "Quiz 3", "Assignments", "Mid Marks", "End Theory", "End Practical"};
@@ -310,10 +343,10 @@ public class Lecturer {
             }
 
             public void showCourseName(){
-                if (lecCourseComboBox.getSelectedItem() == null) return;
+                if (selectLecCourseComboBox.getSelectedItem() == null) return;
                 DbConnector db = new DbConnector();
                 conn = db.getConnection();
-                String courseCode = lecCourseComboBox.getSelectedItem().toString();
+                String courseCode = selectLecCourseComboBox.getSelectedItem().toString();
 
                 String sql = "SELECT * FROM course WHERE ccode = ?";
                 try {
@@ -323,7 +356,6 @@ public class Lecturer {
 
                     while (rs.next()) {
                         String cname = rs.getString("cname");
-                        courseNameLabel.setText(cname);
                         LecCourseNameLabel.setText(cname);
                     }
 
@@ -549,7 +581,6 @@ public class Lecturer {
 
                     stuIDTextField.setText("");
                     stuMarksField.setText("");
-                   // stuCourseTextField.setText("");
                     addMarkTypeComboBox.setSelectedIndex(0);
 
                 } catch (SQLException e) {
