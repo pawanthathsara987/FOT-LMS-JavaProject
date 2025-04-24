@@ -22,8 +22,6 @@ public class Lecturer {
     private JButton viewStudentEligibilityButton;
     private JComboBox stuLevelComboBox;
     private JButton uploadLecNoteButton;
-    private JTextField textField1;
-    private JButton uploadButton;
     private JComboBox updateMarkTypeComboBox;
     private JPanel addLecMaterialPanel;
     private JPanel updateMarksPanel;
@@ -88,6 +86,10 @@ public class Lecturer {
     private JComboBox selectLecCourseComboBox;
     private JLabel LecCourseNameLabel;
     private JLabel courNameLabel;
+    private JComboBox selectCourseforQuizComboBox;
+    private JTextField quizLinkTextField;
+    private JButton uploadButton;
+    private JComboBox selectQuizNumber;
 
 
     private String stuid;
@@ -113,6 +115,71 @@ public class Lecturer {
         frame.setSize(1400,750);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+
+        selectCourseforQuizComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                showLecName();
+            }
+
+            public void showLecName(){
+                if(selectCourseforQuizComboBox.getSelectedItem() == null) return;
+
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String courseCode = selectCourseforQuizComboBox.getSelectedItem().toString();
+
+                String sql = "SELECT * FROM course WHERE ccode = ?";
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, courseCode);
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {
+                        String cName = rs.getString("cname");
+                        courNameLabel.setText(cName);
+                    }
+
+                    rs.close();
+                    pstmt.close();
+                    conn.close();
+
+                } catch (SQLException e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }
+
+        });
+        uploadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String courseCode = selectCourseforQuizComboBox.getSelectedItem().toString();
+                int qNumber = selectQuizNumber.getSelectedIndex();
+                String quizLink = quizLinkTextField.getText().toString();
+
+                String sql = "INSERT INTO quiz(ccode, quiz_number, quiz_link) VALUES (?,?,?)";
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, courseCode);
+                    pstmt.setInt(2, qNumber);
+                    pstmt.setString(3, quizLink);
+                    int rowCount = pstmt.executeUpdate();
+
+                    if (rowCount > 0) {
+                        JOptionPane.showMessageDialog(null, "Quiz uploaded successfully!");
+                        quizLinkTextField.setText("");
+                    }
+                    pstmt.close();
+                    conn.close();
+                } catch (SQLException ex) {
+                    System.out.println("Error: " + ex.getMessage());
+                }
+            }
+        });
     }
     public Lecturer(String lecUsername, String lecName) {
 
@@ -128,7 +195,36 @@ public class Lecturer {
                 parentPanel.add(addLecMaterialPanel);
                 parentPanel.repaint();
                 parentPanel.revalidate();
+
+                if(selectCourseforQuizComboBox.getSelectedItem() == null){
+                    showCoursesList();
+                }
+
             }
+
+            public void showCoursesList(){
+                selectCourseforQuizComboBox.removeAllItems();
+
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String sql = "SELECT ccode FROM course WHERE lecusername = ?";
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, lecUsername);
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {
+                        courseID = rs.getString("ccode");
+                        selectCourseforQuizComboBox.addItem(courseID);
+                    }
+                    rs.close();
+                    pstmt.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    System.out.println("SQLException: " + e.getMessage());
+                }
+            }
+
         });
         uploadLecNoteButton.addActionListener(new ActionListener() {
             @Override
