@@ -1,3 +1,6 @@
+package Admin;
+
+import LoginForm.LoginForm;
 import org.jdatepicker.JDatePicker;
 
 import javax.swing.*;
@@ -7,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.sql.*;
 import java.time.*;
 
@@ -93,17 +97,12 @@ public class Admin {
     private JButton nsubmit;
     private JButton nddelete;
     private JLabel adminname;
-    private JComboBox tlevel;
-    private JComboBox tstime;
-    private JComboBox tdepartment;
-    private JComboBox tday;
-    private JComboBox tcourse;
-    private JComboBox tcoursetype;
-    private JButton tsubmit;
     private JButton tdelete;
-    private JComboBox tetime;
-    private JComboBox thall;
     private JTable timetableInfo;
+    private JComboBox tclevel;
+    private JComboBox tcdepartment;
+    private JButton Create;
+    private JButton tsubmit_btn;
     private JFrame frame;
 
     public String adminusername;
@@ -194,7 +193,7 @@ public class Admin {
                     JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 frame.dispose();
-                LoginForm lf = new LoginForm();
+                new LoginForm();
             }
         });
 
@@ -354,25 +353,26 @@ public class Admin {
         });
 
         //------------------------------------------------------------Time Table----------------------------------------------------------------------------------------//
-
-
         tcreate_btn.setBackground(Color.GREEN);
-        showAvailableCourse();
         showTimeTableDetails();
 
+        noticeInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                selectRow();
+            }
+        });
         ActionListener listener3 = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == tcreate_btn) {
                     tcreate_btn.setBackground(Color.GREEN);
-                    tdelete_btn.setBackground(Color.WHITE);
-                    showAvailableCourse();
+                    tdelete_btn.setBackground(Color.white);
                     showTimeTableDetails();
                 } else if (e.getSource() == tdelete_btn) {
-                    tcreate_btn.setBackground(Color.WHITE);
+                    tcreate_btn.setBackground(Color.white);
                     tdelete_btn.setBackground(Color.GREEN);
                     showTimeTableDetails();
-
                 }
             }
         };
@@ -382,35 +382,24 @@ public class Admin {
         ActionListener listener4 = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showAvailableCourse();
-            }
-        };
-        tlevel.addActionListener(listener4);
-        tdepartment.addActionListener(listener4);
-
-        tsubmit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                createTimeTable();
-            }
-        });
-
-        ActionListener listener6 = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
                 showTimeTableDetails();
             }
         };
-        tlevel.addActionListener(listener6);
-        tdepartment.addActionListener(listener6);
+        tclevel.addActionListener(listener4);
+        tcdepartment.addActionListener(listener4);
 
-
-        tdelete.addActionListener(new ActionListener() {
+        tsubmit_btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteTimeTable();
+                // Get selected level and department
+                String level = tclevel.getSelectedItem().toString();
+                String department = tcdepartment.getSelectedItem().toString();
+
+                // Call the method to open the Excel file
+                openExcelFile(level, department);
             }
         });
+
 
         //------------------------------------------------------------Notice----------------------------------------------------------------------------------------//
 
@@ -447,18 +436,6 @@ public class Admin {
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteNotice();
-            }
-        });
-        ActionListener listener7 = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showTimeTableDetails();
-            }
-        };
-        noticeInfo.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                selectRow();
             }
         });
     }
@@ -1109,7 +1086,7 @@ public class Admin {
     public void createCourse() {
         String ccode = ccoursecode.getText().toUpperCase();
         String ctype = ccoursetype.getSelectedItem().toString();
-        String cnoofcredit = ccredit.getText();
+        int cnoofcredit = Integer.parseInt(ccredit.getText());
         String cname = ccoursename.getText();
         String clevel = ccourselevel.getSelectedItem().toString();
         String cdep = cdepartment.getSelectedItem().toString();
@@ -1141,7 +1118,7 @@ public class Admin {
         try(PreparedStatement stmt = conn.prepareStatement(createCourse_sql)) {
             stmt.setString(1, ccode);
             stmt.setString(2, cname);
-            stmt.setString(3, cnoofcredit);
+            stmt.setInt(3, cnoofcredit);
             stmt.setString(4, ctype);
             stmt.setString(5, clevel);
             stmt.setString(6, depid);
@@ -1264,209 +1241,11 @@ public class Admin {
 
 
     //------------------------------------------------------------Time Table----------------------------------------------------------------------------------------//
-
-    // show available courses according to select level and department--------------------------------------------------
-    public void showAvailableCourse() {
-        String level = tlevel.getSelectedItem().toString();
-        String dep = tdepartment.getSelectedItem().toString().toUpperCase();
-
-        Connection conn = Database.DbConnector.getConnection();
-        if (conn == null) {
-            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
-            return;
-        }
-
-        switch (dep) {
-            case "ICT":
-                depid = "D001";
-                break;
-            case "ET":
-                depid = "D002";
-                break;
-            case "BST":
-                depid = "D003";
-                break;
-            default:
-                JOptionPane.showMessageDialog(frame, "Invalid department!");
-                return;
-        }
-
-        String showAvailableCourse_sql = "SELECT ccode, cname FROM course WHERE clevel = ? AND depid = ?";
-
-        try(PreparedStatement stmt = conn.prepareStatement(showAvailableCourse_sql)) {
-            stmt.setString(1, level);
-            stmt.setString(2, depid);
-            ResultSet rs = stmt.executeQuery();
-
-            tcourse.removeAllItems();
-
-            while(rs.next()) {
-                String coursename = rs.getString("ccode") + " " + rs.getString("cname");
-                tcourse.addItem(coursename);
-            }
-        } catch (SQLException e) {
-            System.err.println("Course showing error" + e.getMessage());
-        }
-
-    }
-
-    // creaet time table when user click submit nutton
-    public void createTimeTable() {
-        String level = tlevel.getSelectedItem().toString();
-        String department = tdepartment.getSelectedItem().toString();
-        String day = tday.getSelectedItem().toString();
-        String startTime = tstime.getSelectedItem().toString();
-        String endTime = tetime.getSelectedItem().toString();
-        String hall = thall.getSelectedItem().toString();
-        String course = tcourse.getSelectedItem() != null ? tcourse.getSelectedItem().toString() : null;
-        String courseType = tcoursetype.getSelectedItem().toString();
-        String lecname = null;
-
-        switch (department) {
-            case "ICT":
-                depid = "D001";
-                break;
-            case "ET":
-                depid = "D002";
-                break;
-            case "BST":
-                depid = "D003";
-                break;
-            default:
-                JOptionPane.showMessageDialog(frame, "Invalid department!");
-                return;
-        }
-
-        // Input validation
-        if (course == null) {
-            JOptionPane.showMessageDialog(frame, "Please fill course to create a timetable.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        String coursecode = course.split(" ")[0];
-
-        Connection conn = Database.DbConnector.getConnection();
-        if (conn == null) {
-            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
-            return;
-        }
-
-        String getlecname = "SELECT lecusername FROM course WHERE ccode = ?";
-
-        String createTimeTable_sql = "INSERT INTO timetable (level, depid, day, start_time, end_time, hall, cname, ctype, lec_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-
-        // Database operation
-        try (PreparedStatement stmt1 = conn.prepareStatement(getlecname); PreparedStatement stmt2 = conn.prepareStatement(createTimeTable_sql)) {
-
-            stmt1.setString(1, coursecode);
-            ResultSet rs = stmt1.executeQuery();
-
-            if (rs.next()) {
-                lecname = rs.getString("lecusername");
-            }
-
-            String dep_id = depid;
-
-            // Set parameters for the prepared statement
-            stmt2.setString(1, level);
-            stmt2.setString(2, dep_id);
-            stmt2.setString(3, day);
-            stmt2.setString(4, startTime);
-            stmt2.setString(5, endTime);
-            stmt2.setString(6, hall);
-            stmt2.setString(7, course);
-            stmt2.setString(8, courseType);
-            stmt2.setString(9, lecname);
-
-            // Execute the update
-            int rowsInserted = stmt2.executeUpdate();
-
-            if (rowsInserted > 0) {
-                JOptionPane.showMessageDialog(frame, "Timetable created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                showTimeTableDetails();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Failed to create timetable.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(frame, "Database connection error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
-    // delete time table when click delete button---------------------------------------------------------------------=-
-    public void deleteTimeTable() {
-        String level = tlevel.getSelectedItem().toString();
-        String dep = tdepartment.getSelectedItem().toString();
-        String dep_id = null;
-        switch (dep) {
-            case "ICT":
-                dep_id = "D001";
-                break;
-            case "ET":
-                dep_id = "D002";
-                break;
-            case "BST":
-                dep_id = "D003";
-                break;
-            default:
-                JOptionPane.showMessageDialog(frame, "Invalid department!");
-                return;
-        }
-
-        Connection conn = Database.DbConnector.getConnection();
-        if (conn == null) {
-            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
-            return;
-        }
-
-        String deleteTimeTable_sql = "DELETE FROM timetable WHERE level = ? AND depid = ?";
-
-        try(PreparedStatement stmt = conn.prepareStatement(deleteTimeTable_sql)) {
-            stmt.setString(1, level);
-            stmt.setString(2, dep_id);
-
-            stmt.executeUpdate();
-            JOptionPane.showMessageDialog(frame, "Time Table deleted successfully!");
-            showTimeTableDetails();
-        } catch (SQLException e) {
-            System.err.println("Timetable deleting error" + e.getMessage());
-        }
-    }
-
-
-    //show time table details when load panel and click button which change between panel--------------------------------
     public void showTimeTableDetails() {
-        String dep = null;
-        String dep_id = null;
-        String level = null;
-        if (tcreate_btn.getBackground() == Color.GREEN) {
-            level = tlevel.getSelectedItem().toString();
-            dep = tdepartment.getSelectedItem().toString().toUpperCase();
-        } else if (tdelete_btn.getBackground() == Color.GREEN) {
-            level = tdlevel.getSelectedItem().toString();
-            dep = tddepartment.getSelectedItem().toString().toUpperCase();
-        }
+        String Level = tclevel.getSelectedItem().toString();
+        String cdep = tcdepartment.getSelectedItem().toString();
+        String showTimeTableDetails_sql = null;
 
-
-        switch (dep) {
-            case "ICT":
-                dep_id = "D001";
-                break;
-            case "ET":
-                dep_id = "D002";
-                break;
-            case "BST":
-                dep_id = "D003";
-                break;
-            default:
-                JOptionPane.showMessageDialog(frame, "Invalid department!");
-                return;
-        }
-
-        String showNoticeDetails_sql = "SELECT * FROM timetable WHERE level = ? AND depid = ?";
 
         Connection conn = Database.DbConnector.getConnection();
         if (conn == null) {
@@ -1474,9 +1253,31 @@ public class Admin {
             return;
         }
 
-        try(PreparedStatement stmt = conn.prepareStatement(showNoticeDetails_sql)) {
-            stmt.setString(1, level);
-            stmt.setString(2, dep_id);
+        switch (cdep) {
+            case "ICT":
+                depid = "D001";
+                break;
+            case "ET":
+                depid = "D002";
+                break;
+            case "BST":
+                depid = "D003";
+                break;
+        }
+
+        if (tcreate_btn.getBackground() == Color.GREEN) {
+            showTimeTableDetails_sql = "SELECT level, depid, table_name FROM timetable WHERE level = ? AND depid = ?";
+        } else if (tdelete_btn.getBackground() == Color.GREEN) {
+            showTimeTableDetails_sql = "SELECT level, depid, table_name FROM timetable ORDER BY level";
+        }
+
+
+        try(PreparedStatement stmt = conn.prepareStatement(showTimeTableDetails_sql)) {
+            if (tcreate_btn.getBackground() == Color.GREEN) {
+                stmt.setString(1, Level);
+                stmt.setString(2, depid);
+            }
+
             ResultSet rs = stmt.executeQuery();
             ResultSetMetaData rsmd = rs.getMetaData();
             DefaultTableModel model = (DefaultTableModel) timetableInfo.getModel();
@@ -1498,10 +1299,182 @@ public class Admin {
                 model.addRow(rowData);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error showing course details: " + e.getMessage(), e);
+            throw new RuntimeException("Error showing time table details: " + e.getMessage(), e);
         }
     }
 
+    private void openExcelFile(String level, String department) {
+        // Validate inputs
+        if (level == null || department == null) {
+            JOptionPane.showMessageDialog(frame, "Please select a course level and department!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Define base path (relative or configurable)
+        String basePath = "Resources"; // Adjust based on project structure
+        String fileName;
+
+        // Map level and department to file name
+        switch (level) {
+            case "Level 1":
+                switch (department) {
+                    case "ICT":
+                        fileName = "Level1_ICT.xlsm";
+                        break;
+                    case "ET":
+                        fileName = "Level1_ET.xlsm";
+                        break;
+                    case "BST":
+                        fileName = "Level1_BST.xlsm";
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(frame, "Invalid department!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                }
+                break;
+            case "Level 2":
+                switch (department) {
+                    case "ICT":
+                        fileName = "Level2_ICT.xlsm";
+                        break;
+                    case "ET":
+                        fileName = "Level2_ET.xlsm";
+                        break;
+                    case "BST":
+                        fileName = "Level2_BST.xlsm";
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(frame, "Invalid department!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                }
+                break;
+            case "Level 3":
+                switch (department) {
+                    case "ICT":
+                        fileName = "Level3_ICT.xlsm";
+                        break;
+                    case "ET":
+                        fileName = "Level3_ET.xlsm";
+                        break;
+                    case "BST":
+                        fileName = "Level3_BST.xlsm";
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(frame, "Invalid department!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                }
+                break;
+            case "Level 4":
+                switch (department) {
+                    case "ICT":
+                        fileName = "Level4_ICT.xlsm";
+                        break;
+                    case "ET":
+                        fileName = "Level4_ET.xlsm";
+                        break;
+                    case "BST":
+                        fileName = "Level4_BST.xlsm";
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(frame, "Invalid department!", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                }
+                break;
+            default:
+                JOptionPane.showMessageDialog(frame, "Invalid course level!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+
+        // Construct file path
+//        String filePath = String.format("%s%s%s%s%s", basePath, File.separator, "TimeTable", File.separator, level.replace(" ", "") + "_student", File.separator, fileName);
+        String filePath = "C:\\Users\\lsand\\IdeaProjects\\FOT-LMS-JavaProject\\Resources\\TimeTable\\" + level.replace(" ", "") + "_student\\" + fileName;
+
+        File excelFile = new File(filePath);
+
+        try {
+            // Check if Desktop is supported
+            if (!Desktop.isDesktopSupported()) {
+                JOptionPane.showMessageDialog(frame, "Desktop operations are not supported on this platform!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (excelFile.exists() && excelFile.canRead()) {
+                Desktop.getDesktop().open(excelFile);
+                int confirm = JOptionPane.showConfirmDialog(
+                        frame, "Did you create time table",
+                        "Confirm Create timetable", JOptionPane.YES_NO_OPTION
+                );
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    updateDatabaseTimetable(fileName);
+                    JOptionPane.showMessageDialog(frame, "Timetable created successfully!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "File not found or inaccessible: " + filePath, "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }
+
+    public void updateDatabaseTimetable(String filename) {
+        String level = null;
+        String cdep = null;
+        String sql = null;
+        if (tcreate_btn.getBackground() == Color.GREEN) {
+            level = tclevel.getSelectedItem().toString();
+            cdep = tcdepartment.getSelectedItem().toString();
+
+            sql = "UPDATE timetable SET table_name = ? WHERE level = ? AND depid = ?";
+        } else if (tdelete_btn.getBackground() == Color.GREEN) {
+            level = tdlevel.getSelectedItem().toString();
+            cdep = tddepartment.getSelectedItem().toString();
+
+            sql = "DELETE table_name FROM timetable WHERE level = ? AND depid = ?";
+        }
+
+        switch (cdep) {
+            case "ICT":
+                depid = "D001";
+                break;
+            case "ET":
+                depid = "D002";
+                break;
+            case "BST":
+                depid = "D003";
+                break;
+            default:
+                JOptionPane.showMessageDialog(frame, "Invalid department!");
+                return;
+        }
+
+        Connection conn = Database.DbConnector.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(frame, "Failed to connect to database!");
+            return;
+        }
+
+        try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            if (tcreate_btn.getBackground() == Color.GREEN) {
+                stmt.setString(1, filename);
+                stmt.setString(2, level);
+                stmt.setString(3, depid);
+
+//                JOptionPane.showMessageDialog(frame, "Time table create successfully!");
+                stmt.executeUpdate();
+                showTimeTableDetails();
+            } else if (tdelete_btn.getBackground() == Color.GREEN) {
+                stmt.setString(1, level);
+                stmt.setString(2, depid);
+                stmt.executeUpdate();
+                showTimeTableDetails();
+                JOptionPane.showMessageDialog(frame, "Time table deleted successfully!");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating database timetable: " + e.getMessage(), e);
+        }
+    }
 
     //------------------------------------------------------------Notice----------------------------------------------------------------------------------------//
 
@@ -1610,22 +1583,33 @@ public class Admin {
         ntitle.setText(null);
         ndescription.setText(null);
     }
-    
+
     //
     public void selectRow() {
-        if (uedit_btn.getBackground() == Color.GREEN) {
-            unamebox1.setText(userinfo.getValueAt(userinfo.getSelectedRow(), 1).toString());
-            fnamebox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 2).toString());
-            lnamebox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 3).toString());
-            emailbox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 4).toString());
-            dobbox1.getModel().setSelected(userinfo.getValueAt((userinfo.getSelectedRow()), 5).toString().equals("Yes"));
-            pnobox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 6).toString());
-        } else if (udelete_btn.getBackground() == Color.GREEN) {
-            dltuname.setText(userinfo.getValueAt(userinfo.getSelectedRow(), 1).toString());
-        } else if (cdelete_btn.getBackground() == Color.GREEN) {
-            cdcoursecode.setText(courseInfo.getValueAt(courseInfo.getSelectedRow(), 0).toString());
-        } else if (ndelete_btn.getBackground() == Color.GREEN) {
-            ndtitle.setText(noticeInfo.getValueAt(noticeInfo.getSelectedRow(), 0).toString());
+
+        if (crtupanel.isVisible()) {
+            if (uedit_btn.getBackground() == Color.GREEN) {
+                setFieldToNull();
+                unamebox1.setText(userinfo.getValueAt(userinfo.getSelectedRow(), 1).toString());
+                fnamebox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 2).toString());
+                lnamebox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 3).toString());
+                emailbox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 4).toString());
+                dobbox1.getModel().setSelected(userinfo.getValueAt((userinfo.getSelectedRow()), 5).toString().equals("Yes"));
+                pnobox1.setText(userinfo.getValueAt((userinfo.getSelectedRow()), 6).toString());
+            } else if (udelete_btn.getBackground() == Color.GREEN) {
+                dltuname.setText("");
+                dltuname.setText(userinfo.getValueAt(userinfo.getSelectedRow(), 1).toString());
+            }
+        } else if (crtcpanel.isVisible()) {
+            if (cdelete_btn.getBackground() == Color.GREEN) {
+                cdcoursecode.setText("");
+                cdcoursecode.setText(courseInfo.getValueAt(courseInfo.getSelectedRow(), 0).toString());
+            }
+        } else if (crtnpanel.isVisible()) {
+            if (ndelete_btn.getBackground() == Color.GREEN) {
+                ndtitle.setText("");
+                ndtitle.setText(noticeInfo.getValueAt(noticeInfo.getSelectedRow(), 0).toString());
+            }
         }
     }
 

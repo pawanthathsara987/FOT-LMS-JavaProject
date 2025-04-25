@@ -1,3 +1,7 @@
+package LoginForm;
+
+import Admin.Admin;
+import ChangePassword.ChangePassword;
 import Database.DbConnector;
 
 import javax.swing.*;
@@ -120,19 +124,19 @@ public class LoginForm{
                     switch (table) {
                         case "student":
                             frame.dispose();
-//                            Student st = new Student(username);
+//                            new Student(username);
                             break;
                         case "lecturer":
                             frame.dispose();
-//                            lecturer st = new lecturer(username);
+//                            new lecturer(username);
                             break;
                         case "technician":
                             frame.dispose();
-//                            technician st = new technician(username);
+//                            new technician(username);
                             break;
                         case "admin":
                             frame.dispose();
-                            Admin ad = new Admin(username, name);
+                            new Admin(username, name);
                             break;
                     }
                 } else {

@@ -1,3 +1,6 @@
+package ChangePassword;
+
+import LoginForm.LoginForm;
 import Database.DbConnector;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -15,7 +18,7 @@ public class ChangePassword {
     public String table;
     public String username;
 
-    ChangePassword(){
+    public ChangePassword(){
         JFrame cframe = new JFrame("Change Password");
         cframe.add(Main_panel);
         cframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
