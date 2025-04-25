@@ -3,6 +3,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -20,7 +22,7 @@ public class Lecturer {
     private JButton UpdateMarksButton;
     private JButton addMarksButton;
     private JButton viewStudentEligibilityButton;
-    private JComboBox stuLevelComboBox;
+    private JComboBox stuCourseComboBox;
     private JButton uploadLecNoteButton;
     private JComboBox updateMarkTypeComboBox;
     private JPanel addLecMaterialPanel;
@@ -180,6 +182,8 @@ public class Lecturer {
                 }
             }
         });
+
+
     }
     public Lecturer(String lecUsername, String lecName) {
 
@@ -200,8 +204,33 @@ public class Lecturer {
                     showCoursesList();
                 }
 
+                if (stuCourseComboBox.getSelectedItem() == null) {
+                    showCourseForMaterial();
+                }
             }
+            public void showCourseForMaterial(){
+                stuCourseComboBox.removeAllItems();
 
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String sql = "SELECT ccode FROM course WHERE lecusername = ?";
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1,lecUsername);
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {
+                        courseID = rs.getString("ccode");
+                        stuCourseComboBox.addItem(courseID);
+                    }
+                    rs.close();
+                    pstmt.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    System.out.println("Error" + e.getMessage());
+                }
+
+            }
             public void showCoursesList(){
                 selectCourseforQuizComboBox.removeAllItems();
 
@@ -229,58 +258,45 @@ public class Lecturer {
         uploadLecNoteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String courseCodeForLecNote = stuCourseComboBox.getSelectedItem().toString();
+                int week = lecWeekComboBox.getSelectedIndex();
+
                 JFileChooser chooser = new JFileChooser();
                 int result = chooser.showOpenDialog(null);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    File lecNote = chooser.getSelectedFile();
-                    String stuLevel = (String) stuLevelComboBox.getSelectedItem();
-                    String lecWeek = (String) lecWeekComboBox.getSelectedItem();
+                    File file = chooser.getSelectedFile();
 
-                    if (!stuLevel.equals("") && !lecWeek.equals("")) {
-                        saveLecNote(lecNote,stuLevel,lecWeek);
-                    }else {
-                        JOptionPane.showMessageDialog(null, "Please select both level and week.");
-                    }
-                }
-            }
-
-            public void saveLecNote(File file, String stuLevel, String lecWeek){
-
-                File destination = new File("JavaProject/");
-                if(!destination.exists()){
-                    destination.mkdir();
-                }
-
-
-                try {
-                    String destinationPath = destination.getAbsolutePath() + "/" + file.getName();
-                    Files.copy(file.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
-
-                    DbConnector db = new DbConnector();
-                    conn = db.getConnection();
-
-                    String sql = "INSERT INTO lecture_material(level,week,file_name,file_path) VALUES (?,?,?,?)";
                     try {
-                        PreparedStatement pstmt = conn.prepareStatement(sql);
-                        pstmt.setString(1, stuLevel);
-                        pstmt.setString(2, lecWeek);
-                        pstmt.setString(3, file.getName());
-                        pstmt.setString(4, destinationPath);
-                        int rows = pstmt.executeUpdate();
-                        if (rows > 0) {
-                            JOptionPane.showMessageDialog(null, "Lecture note uploaded successfully!");
+                        FileInputStream fis = new FileInputStream(file);
+                        DbConnector db = new DbConnector();
+                        conn = db.getConnection();
+
+                        String sql ="INSERT INTO lecNotes(ccode, week, file_name, file_data) VALUES(?,?,?,?)";
+                        try {
+                            PreparedStatement pstmt = conn.prepareStatement(sql);
+                            pstmt.setString(1,courseCodeForLecNote);
+                            pstmt.setInt(2,week);
+                            pstmt.setString(3,file.getName());
+                            pstmt.setBinaryStream(4,fis,(int)file.length());
+
+                            pstmt.executeUpdate();
+                            pstmt.close();
+                            conn.close();
+                        } catch (SQLException ex) {
+                            System.out.println("Error: " + ex.getMessage());
                         }
-                    } catch (SQLException e) {
-                        System.out.println("Statement error: " + e.getMessage());
+                        JOptionPane.showMessageDialog(null, "File uploaded successfully!");
+                        fis.close();
+                        chooser.setVisible(false);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Upload failed: " + ex.getMessage());
                     }
-
-                } catch (IOException e) {
-                    System.out.println("File could not be copied" + e.getMessage());
                 }
-
             }
         });
+
         uploadAssingmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
