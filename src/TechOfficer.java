@@ -1008,7 +1008,7 @@ private void addMedical() {
         header.setForeground(Color.BLACK);
     }
 
-    
+
 
 
     private void createAttendanceViewTable() {

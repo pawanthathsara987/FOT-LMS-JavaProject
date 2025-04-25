@@ -76,7 +76,7 @@ public class LecturerAtten {
 
 
         // Initialize the table
-        //attendanceViewTable();
+
         // Load courses for the student
         loadCoursesForLecturer();
 
@@ -91,12 +91,15 @@ public class LecturerAtten {
             }
         });
 
+        //Grater than 80
         graatten.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 attendanceViewGrater80();
             }
         });
+
+//less than 80
         lessatten.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -105,30 +108,39 @@ public class LecturerAtten {
         });
 
 
+
         medselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showMedicalRecords();
             }
         });
+
+
         medpercen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 attendanceViewWithMedical();
             }
         });
+
+
         medgrater.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 attendanceViewMedicalGrater80();
             }
         });
+
+
         medless.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 attendanceViewMedicalLess80();
             }
         });
+
+
         medTP.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -136,6 +148,8 @@ public class LecturerAtten {
             }
         });
     }
+
+
 
     private void loadCoursesForLecturer() {
 
@@ -170,6 +184,7 @@ public class LecturerAtten {
     }
 
 
+//-----------------------------------------------------------------------------------
 
     private void loadCoursesForLecturerMed() {
 
@@ -204,6 +219,8 @@ public class LecturerAtten {
     }
 
 
+//--------------------------------------------------------------------------------------------------------------
+
     private void attendanceView() {
         // Define the column names for the table
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
@@ -219,16 +236,16 @@ public class LecturerAtten {
         // Get the selected course code from the ComboBox
         String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
 
-        // Get the student ID from the text field (assumed to be named 'stuidTextField')
+        // Get the student ID from the text field
         String selectedStudentID = selectstuid.getText().trim();
 
-        // Ensure a course is selected
+        // course is selected
         if (selectedCourse.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Please select a course.");
             return;
         }
 
-        // Database connection
+
         DbConnector db = new DbConnector();
         Connection conn = db.getConnection();
         if (conn == null) {
@@ -239,7 +256,7 @@ public class LecturerAtten {
         try {
             CallableStatement stmt;
 
-            // If a student ID is entered, filter based on both course code and student ID
+            // If a student id is entered, on both course code and student id
             if (!selectedStudentID.isEmpty()) {
                 stmt = conn.prepareCall("{CALL ShowStudentCourseAttendance(?, ?)}");
                 stmt.setString(1, selectedCourse);
@@ -250,7 +267,7 @@ public class LecturerAtten {
                 stmt.setString(1, selectedCourse);
             }
 
-            // Execute the query and populate the table with the attendance data
+
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -269,13 +286,13 @@ public class LecturerAtten {
             db.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();  // Debugging
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error loading attendance: " + e.getMessage());
         }
     }
 
 
-
+//---------------------------------------------------------------------------------------------------------------------
 
     private void attendanceViewGrater80() {
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
@@ -306,7 +323,7 @@ public class LecturerAtten {
 
             // Prepare the stored procedure call
             CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudentGrater( ?)}");
-            stmt.setString(1, selectedCourse);  // Pass the selected course code to the procedure
+            stmt.setString(1, selectedCourse);  // Pass the selected course code
 
             ResultSet rs = stmt.executeQuery();
 
@@ -332,6 +349,8 @@ public class LecturerAtten {
             JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
         }
     }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     private void attendanceViewLess80() {
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
@@ -359,8 +378,6 @@ public class LecturerAtten {
 
         try {
 
-
-            // Prepare the stored procedure call
             CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudentLess( ?)}");
             stmt.setString(1, selectedCourse);  // Pass the selected course code to the procedure
 
@@ -381,18 +398,16 @@ public class LecturerAtten {
             db.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace to console for debugging
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error loading attendance percentage: " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();  // General exception handling
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
         }
     }
 
 
-
-
-
+    //------------------------------------------------------------------------------
 
     private void showMedicalRecords() {
         String[] columns = {"Sutdent ID","fname","lname","Week", "Date", "Type", "Hours", "Status", "Medical Submitted"};
@@ -433,10 +448,10 @@ public class LecturerAtten {
             while (rs.next()) {
                 String medid = rs.getString("medid");
 
-                // Debugging: Check the value of medid
+
                 System.out.println("medid: " + medid);
 
-                // Only add rows where medid is not NULL (indicating a medical submission)
+
                 if (medid != null) {
                     foundMedicalSubmitted = true;
 
@@ -471,6 +486,9 @@ public class LecturerAtten {
         }
     }
 
+
+//----------------------------------------------------------------------------------------------------------------------
+
     private void attendanceViewWithMedical() {
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
@@ -499,7 +517,7 @@ public class LecturerAtten {
 
             // Prepare the stored procedure call
             CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudentWith( ?)}");
-            stmt.setString(1, selectedCourse);  // Pass the selected course code to the procedure
+            stmt.setString(1, selectedCourse);  // Pass the selected course code
 
             ResultSet rs = stmt.executeQuery();
 
@@ -518,14 +536,16 @@ public class LecturerAtten {
             db.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace to console for debugging
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error loading attendance percentage: " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();  // General exception handling
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
         }
     }
 
+
+    //----------------------------------------------------------------------------------------------------------------------
 
     private void attendanceViewMedicalGrater80() {
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
@@ -556,7 +576,7 @@ public class LecturerAtten {
 
             // Prepare the stored procedure call
             CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudentWithGrater( ?)}");
-            stmt.setString(1, selectedCourse);  // Pass the selected course code to the procedure
+            stmt.setString(1, selectedCourse);  // Pass the selected course code
 
             ResultSet rs = stmt.executeQuery();
 
@@ -583,6 +603,7 @@ public class LecturerAtten {
         }
     }
 
+    //--------------------------------------------------------------------------------------------------------------------
 
     private void attendanceViewMedicalLess80() {
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
@@ -613,7 +634,7 @@ public class LecturerAtten {
 
             // Prepare the stored procedure call
             CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudentWithLess( ?)}");
-            stmt.setString(1, selectedCourse);  // Pass the selected course code to the procedure
+            stmt.setString(1, selectedCourse);  // Pass the selected course code
 
             ResultSet rs = stmt.executeQuery();
 
@@ -632,15 +653,16 @@ public class LecturerAtten {
             db.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace to console for debugging
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error loading attendance percentage: " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();  // General exception handling
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
         }
     }
 
 
+    //----------------------------------------------------------------------------------------------------
     //Theory practical separate
 
     private void attendanceViewTheoryPractical() {
@@ -679,7 +701,7 @@ public class LecturerAtten {
                         rs.getString("fname"),
                         rs.getString("lname"),
                         rs.getString("ccode"),
-                        rs.getString("ctype"),  // Add this line to show theory/practical
+                        rs.getString("ctype"),
                         rs.getDouble("attendance_percentage")
                 });
             }
@@ -698,17 +720,6 @@ public class LecturerAtten {
     }
 
 
-
-/*
-    private void attendanceViewTable() {
-        // Initialize table with column names
-        String[] latent = {"Student ID", "Course Code", "Date", "Type", "Present", "Hours", "Medical Submitted"};
-        DefaultTableModel model = new DefaultTableModel(null, latent);
-        aviewtable.setModel(model);
-    }
-
-
- */
 
     public static void main(String[] args) {
         new LecturerAtten("L0003", "LC0003");

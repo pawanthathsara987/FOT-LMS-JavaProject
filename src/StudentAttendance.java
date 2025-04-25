@@ -102,6 +102,8 @@ public class StudentAttendance {
                 show15WeekMedical();
             }
         });
+
+
         presentageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -109,6 +111,8 @@ public class StudentAttendance {
             }
         });
     }
+
+    //-----------------------------------------------------------------------------------------------------------------
 
     private void loadCoursesForStudentAtten() {
 
@@ -124,10 +128,10 @@ public class StudentAttendance {
 
             String query = "SELECT DISTINCT ccode FROM attendance WHERE stuid = ?";
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, stuUser);  // Use stuUser here to refer to logged-in student's ID
+            ps.setString(1, stuUser);  // Use stuUser
 
             ResultSet rs = ps.executeQuery();
-            selectcour.removeAllItems(); // Clear the ComboBox before adding new courses
+            selectcour.removeAllItems(); // Clear
 
             while (rs.next()) {
                 selectcour.addItem(rs.getString("ccode"));
@@ -135,12 +139,13 @@ public class StudentAttendance {
 
             rs.close();
             ps.close();
-            db.close();  // Close the connection
+            db.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error loading student courses: " + e.getMessage());
         }
     }
 
+//------------------------------------------------------------------------------------------------------------------
 
     private void loadCoursesForStudentMedical() {
 
@@ -156,10 +161,10 @@ public class StudentAttendance {
 
             String query = "SELECT DISTINCT ccode FROM attendance WHERE stuid = ?";
             PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, stuUser);  // Use stuUser here to refer to logged-in student's ID
+            ps.setString(1, stuUser);  // Use stuUser
 
             ResultSet rs = ps.executeQuery();
-            medselectcour.removeAllItems(); // Clear the ComboBox before adding new courses
+            medselectcour.removeAllItems(); // Clear the ComboBox
 
             while (rs.next()) {
                 medselectcour.addItem(rs.getString("ccode"));
@@ -167,13 +172,14 @@ public class StudentAttendance {
 
             rs.close();
             ps.close();
-            db.close();  // Close the connection
+            db.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error loading student courses: " + e.getMessage());
         }
     }
 
 
+//----------------------------------------------------------------------------------------------------------------
 
     private void attendanceView() {
         String[] columnNames = {"Student ID", "Course Code", "Attendance %"};
@@ -224,6 +230,8 @@ public class StudentAttendance {
             JOptionPane.showMessageDialog(null, "Error loading attendance percentage.");
         }
     }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     private void show15WeekAttendance() {
         String[] columns = {"Week", "Date", "Type", "Status", "Hours", "Medical Submitted"};
@@ -279,7 +287,7 @@ public class StudentAttendance {
     }
 
 
-
+//--------------------------------------------------------------------------------------------------------------------
 
 
     private void medicalView() {
@@ -331,6 +339,9 @@ public class StudentAttendance {
         }
     }
 
+
+    //-----------------------------------------------------------------------------------------------------------------
+
     private void show15WeekMedical() {
         String[] columns = {"Week", "Date", "Type", "Hours", "Status", "Medical Submitted"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
@@ -369,15 +380,15 @@ public class StudentAttendance {
             while (rs.next()) {
                 String medid = rs.getString("medid");
 
-                // Debugging: Check the value of medid
+
                 System.out.println("medid: " + medid);
 
-                // Only add rows where medid is not NULL (indicating a medical submission)
+
                 if (medid != null) {
                     foundMedicalSubmitted = true;
 
                     String status = rs.getString("status");
-                    boolean medicalSubmitted = true;  // Since medid is not null, it's a valid submission
+                    boolean medicalSubmitted = true;
 
                     model.addRow(new Object[]{
                             rs.getInt("week"),
