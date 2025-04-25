@@ -41,6 +41,7 @@ public class LecturerAtten {
     private JButton medgrater;
     private JButton medless;
     private JButton medTP;
+    private JTextField selectstuid;
 
     private String lecUser;
     private String lecName;
@@ -203,24 +204,31 @@ public class LecturerAtten {
     }
 
 
-
     private void attendanceView() {
+        // Define the column names for the table
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         aviewtable.setModel(model);
 
+        // Set the table header style
         JTableHeader header = aviewtable.getTableHeader();
         header.setFont(new Font("SansSerif", Font.BOLD, 14));
         header.setBackground(new Color(204, 255, 204));
         header.setForeground(Color.BLACK);
 
+        // Get the selected course code from the ComboBox
         String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
 
+        // Get the student ID from the text field (assumed to be named 'stuidTextField')
+        String selectedStudentID = selectstuid.getText().trim();
+
+        // Ensure a course is selected
         if (selectedCourse.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Please select a course.");
             return;
         }
 
+        // Database connection
         DbConnector db = new DbConnector();
         Connection conn = db.getConnection();
         if (conn == null) {
@@ -229,11 +237,20 @@ public class LecturerAtten {
         }
 
         try {
+            CallableStatement stmt;
 
-            // Prepare the stored procedure call
-            CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudent( ?)}");
-            stmt.setString(1, selectedCourse);  // Pass the selected course code to the procedure
+            // If a student ID is entered, filter based on both course code and student ID
+            if (!selectedStudentID.isEmpty()) {
+                stmt = conn.prepareCall("{CALL ShowStudentCourseAttendance(?, ?)}");
+                stmt.setString(1, selectedCourse);
+                stmt.setString(2, selectedStudentID);
+            } else {
+                // Otherwise, show attendance for all students in the selected course
+                stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudent(?)}");
+                stmt.setString(1, selectedCourse);
+            }
 
+            // Execute the query and populate the table with the attendance data
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -246,18 +263,19 @@ public class LecturerAtten {
                 });
             }
 
+            // Close the result set and statement
             rs.close();
             stmt.close();
             db.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace to console for debugging
-            JOptionPane.showMessageDialog(null, "Error loading attendance percentage: " + e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();  // General exception handling
-            JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
+            e.printStackTrace();  // Debugging
+            JOptionPane.showMessageDialog(null, "Error loading attendance: " + e.getMessage());
         }
     }
+
+
+
 
     private void attendanceViewGrater80() {
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
