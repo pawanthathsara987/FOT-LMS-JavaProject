@@ -128,6 +128,7 @@ public class TechOfficer {
     private JButton medsebtn;
     private JTextField medid;
     private JButton dmedselect;
+    private JComboBox medctype;
     private JButton attenselect;
 
     private String stuid;
@@ -140,9 +141,9 @@ public class TechOfficer {
     private String med;
     private String dep;
 
+private String techUser;
 
-
-    public TechOfficer(String techuser, String techName) {
+    public TechOfficer(String techUser, String techName) {
         JFrame frame = new JFrame("Add Attendance");
         frame.setContentPane(MainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -153,6 +154,7 @@ public class TechOfficer {
         frame.setResizable(false);
 
         username.setText(techName);
+        this.techUser = techUser;
 
 
         CardLayout cardlayout = new CardLayout();
@@ -257,8 +259,8 @@ public class TechOfficer {
                     medid.setText(med_table.getValueAt(selectedRow, 0).toString());
                     Emedstu.setText(med_table.getValueAt(selectedRow, 1).toString());
                     Emedcour.setText(med_table.getValueAt(selectedRow, 2).toString());
-                    Emeddate.setText(med_table.getValueAt(selectedRow, 3).toString());
-                    Emeddes.setText(med_table.getValueAt(selectedRow, 4).toString());
+                    Emeddate.setText(med_table.getValueAt(selectedRow, 4).toString());
+                    Emeddes.setText(med_table.getValueAt(selectedRow, 5).toString());
 
                 }
             }
@@ -322,8 +324,8 @@ public class TechOfficer {
                     medid.setText(med_table.getValueAt(selectedRow, 0).toString());
                     Emedstu.setText(med_table.getValueAt(selectedRow, 1).toString());
                     Emedcour.setText(med_table.getValueAt(selectedRow, 2).toString());
-                    Emeddate.setText(med_table.getValueAt(selectedRow, 3).toString());
-                    Emeddes.setText(med_table.getValueAt(selectedRow, 4).toString());
+                    Emeddate.setText(med_table.getValueAt(selectedRow, 4).toString());
+                    Emeddes.setText(med_table.getValueAt(selectedRow, 5).toString());
 
                 }
             }
@@ -384,6 +386,13 @@ public class TechOfficer {
             return;
         }
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         // Convert presence to TINYINT (1 = present, 0 = absent)
         int present = pre.equalsIgnoreCase("Present") ? 1 : 0;
         int medical = med.equalsIgnoreCase("True") ? 1 : 0;
@@ -399,8 +408,7 @@ public class TechOfficer {
         String sql = "INSERT INTO attendance (stuid, ccode, sdate, ctype, present, msubmit, depid, hours) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, stuid);
@@ -439,9 +447,15 @@ public class TechOfficer {
                 "JOIN student s ON a.stuid = s.stuid " +
                 "ORDER BY a.sdate DESC";
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
 
@@ -491,6 +505,13 @@ public class TechOfficer {
             return;
         }
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         int presentValue = present.equalsIgnoreCase("Present") ? 1 : 0;
         int medValue = med.equalsIgnoreCase("Yes") || med.equalsIgnoreCase("True") ? 1 : 0;
 
@@ -498,8 +519,7 @@ public class TechOfficer {
         String sql = "UPDATE attendance SET hours = ?, present = ?, depid = ?, msubmit = ? WHERE stuid = ? AND ccode = ? AND sdate = ? AND ctype = ?";
 
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, hours);
@@ -536,6 +556,13 @@ public class TechOfficer {
         String stuId = sestu.getText().trim();
         String courseCode = secour.getText().trim();
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         String sql = "SELECT a.stuid, a.ccode, a.depid, a.sdate, a.ctype, " +
                 "CASE a.present WHEN 1 THEN 'Present' ELSE 'Absent' END AS status, " +
                 "a.hours, " +
@@ -546,8 +573,7 @@ public class TechOfficer {
                 "ORDER BY a.sdate DESC";
 
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, stuId);
@@ -595,6 +621,13 @@ public class TechOfficer {
             return;
         }
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         int confirm = JOptionPane.showConfirmDialog(null,
                 "Are you sure you want to delete this attendance record?",
                 "Confirm Deletion", JOptionPane.YES_NO_OPTION);
@@ -606,8 +639,7 @@ public class TechOfficer {
         String sql = "DELETE FROM attendance WHERE stuid = ? AND ccode = ? AND sdate = ? AND ctype = ?";
 
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, stuId);
@@ -651,23 +683,31 @@ private void addMedical() {
     course = medtextcourse.getText().trim();
     date = medtextdate.getText().trim();
     des = medtextdes.getText();
+    type = medctype.getSelectedItem().toString();
 
     // Validate input
-    if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || des == null ) {
+    if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || des == null || type == null) {
         JOptionPane.showMessageDialog(null, "Please fill in all fields.");
         return;
     }
 
+    DbConnector db = new DbConnector();
+    Connection conn = db.getConnection();
+    if (conn == null) {
+        JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+        return;
+    }
+
     // Check if the student has an absent status for that date and course
-    String checkStatusSql = "SELECT present FROM attendance WHERE stuid = ? AND ccode = ? AND sdate = ?";
+    String checkStatusSql = "SELECT present FROM attendance WHERE stuid = ? AND ccode = ? AND sdate = ? AND ctype = ?";
 
     try {
-        DbConnector db = new DbConnector();
-        Connection conn = db.getConnection();
+
         PreparedStatement checkStmt = conn.prepareStatement(checkStatusSql);
         checkStmt.setString(1, stuid);
         checkStmt.setString(2, course);
         checkStmt.setDate(3, Date.valueOf(date));
+        checkStmt.setString(4, type);
 
         ResultSet rs = checkStmt.executeQuery();
 
@@ -685,22 +725,24 @@ private void addMedical() {
         }
 
         // Insert the medical record
-        String sql = "INSERT INTO medical (stuid, ccode, mdate, mdescription) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO medical (stuid, ccode, mdate, mdescription,ctype) VALUES (?, ?, ?, ?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
 
         pstmt.setString(1, stuid);
         pstmt.setString(2, course);
         pstmt.setDate(3, Date.valueOf(date)); // Ensure date is in YYYY-MM-DD format
         pstmt.setString(4, des);
+        pstmt.setString(5, type);
 
         pstmt.executeUpdate();
 
         // Update the attendance to set msubmit = 1 (medical submitted) for that record
-        String updateSql = "UPDATE attendance SET msubmit = 1 WHERE stuid = ? AND ccode = ? AND sdate = ? AND present = 0";
+        String updateSql = "UPDATE attendance SET msubmit = 1 WHERE stuid = ? AND ccode = ? AND sdate = ? AND present = 0 AND ctype = ?";
         PreparedStatement updateStmt = conn.prepareStatement(updateSql);
         updateStmt.setString(1, stuid);
         updateStmt.setString(2, course);
         updateStmt.setDate(3, Date.valueOf(date));
+        updateStmt.setString(4, type);
         updateStmt.executeUpdate();
 
         updateStmt.close();
@@ -722,15 +764,22 @@ private void addMedical() {
 
 
     private void loadMedicalTable() {
-        String sql = "SELECT m.medid, m.stuid, m.ccode, m.mdate, m.mdescription " +
+
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
+        String sql = "SELECT m.medid, m.stuid, m.ccode,m.ctype, m.mdate, m.mdescription " +
                 "FROM medical m " +
                 "JOIN student s ON m.stuid = s.stuid " +
                 "ORDER BY m.mdate DESC";
 
 
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
@@ -742,11 +791,12 @@ private void addMedical() {
                 int med = rs.getInt("medid");
                 String stuid = rs.getString("stuid");
                 String course = rs.getString("ccode");
+                String type = rs.getString("ctype");
                 String date = rs.getString("mdate");
                 String des = rs.getString("mdescription");
 
 
-                model.addRow(new Object[]{med,stuid, course, date, des});
+                model.addRow(new Object[]{med,stuid, course,type, date, des});
             }
 
             rs.close();
@@ -773,11 +823,17 @@ private void addMedical() {
             return;
         }
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         String sql = "UPDATE medical SET mdescription = ?, mdate = ? ,stuid = ? , ccode = ? WHERE medid = ?";
 
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, description);
@@ -811,15 +867,21 @@ private void addMedical() {
         String stuId = semedstu.getText().trim();
         String courseCode = semedcour.getText().trim();
 
-        String sql = "SELECT m.medid, m.stuid, m.ccode, m.mdate, m.mdescription " +
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
+        String sql = "SELECT m.medid, m.stuid, m.ccode,m.ctype, m.mdate, m.mdescription " +
                 "FROM medical m " +
                 "JOIN student s ON m.stuid = s.stuid " +
                 "WHERE (? = '' OR m.stuid = ?) AND (? = '' OR m.ccode = ?) " +
                 "ORDER BY m.mdate DESC";
 
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             // Set parameters for student ID and course code, even if empty
@@ -841,10 +903,11 @@ private void addMedical() {
                 String mid = rs.getString("medid");
                 String id = rs.getString("stuid");
                 String course = rs.getString("ccode");
+                String type = rs.getString("ctype");
                 String date = rs.getString("mdate");
                 String description = rs.getString("mdescription");
 
-                model.addRow(new Object[]{mid, id, course, date, description});
+                model.addRow(new Object[]{mid, id, course,type, date, description});
             }
 
             // If no records are found, show a message
@@ -866,6 +929,13 @@ private void addMedical() {
     private void deleteMedicalRecord() {
         String mid = medid.getText().trim();
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         int confirm = JOptionPane.showConfirmDialog(null,
                 "Are you sure you want to delete this attendance record?",
                 "Confirm Deletion", JOptionPane.YES_NO_OPTION);
@@ -877,8 +947,7 @@ private void addMedical() {
         String sql = "DELETE FROM medical WHERE medid = ?";
 
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, mid);
@@ -910,7 +979,7 @@ private void addMedical() {
 
 
     private void createMedicalTable() {
-        String[] medcol = {"Medical ID","Student ID","Course Code","Date", "Description"};
+        String[] medcol = {"Medical ID","Student ID","Course Code","Type","Date", "Description"};
         Object[][] data = {};
 
         DefaultTableModel model = new DefaultTableModel(data, medcol);
@@ -973,7 +1042,7 @@ private void addMedical() {
     }
 
     public static void main(String[] args) {
-        new TechOfficer("John1","John");
+        new TechOfficer("T001","TO0001");
 
     }
 

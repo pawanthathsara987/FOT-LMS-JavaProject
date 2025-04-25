@@ -111,9 +111,16 @@ public class StudentAttendance {
     }
 
     private void loadCoursesForStudentAtten() {
+
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
 
             String query = "SELECT DISTINCT ccode FROM attendance WHERE stuid = ?";
             PreparedStatement ps = conn.prepareStatement(query);
@@ -136,9 +143,16 @@ public class StudentAttendance {
 
 
     private void loadCoursesForStudentMedical() {
+
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
 
             String query = "SELECT DISTINCT ccode FROM attendance WHERE stuid = ?";
             PreparedStatement ps = conn.prepareStatement(query);
@@ -178,9 +192,15 @@ public class StudentAttendance {
             return;
         }
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
 
             CallableStatement stmt = conn.prepareCall("{CALL ShowStudentCourseAttendanceByCourseWithout(?, ?)}");
             stmt.setString(1, stuUser);
@@ -222,9 +242,15 @@ public class StudentAttendance {
             return;
         }
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
 
             CallableStatement stmt = conn.prepareCall("{CALL ShowStudent15WeekAttendance(?, ?)}");
             stmt.setString(1, stuUser);
@@ -273,9 +299,14 @@ public class StudentAttendance {
             return;
         }
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
 
             CallableStatement stmt = conn.prepareCall("{CALL ShowStudentCourseAttendanceByCourse(?, ?)}");
             stmt.setString(1, stuUser);
@@ -317,9 +348,15 @@ public class StudentAttendance {
             return;
         }
 
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
         try {
-            DbConnector db = new DbConnector();
-            Connection conn = db.getConnection();
+
 
             CallableStatement stmt = conn.prepareCall("{CALL ShowStudent15WeekMedical(?, ?)}");
             stmt.setString(1, stuUser);
@@ -375,6 +412,6 @@ public class StudentAttendance {
 
 
     public static void main(String[] args) {
-        new StudentAttendance("a0913", "John");
+        new StudentAttendance("S0043", "TG0043");
     }
 }
