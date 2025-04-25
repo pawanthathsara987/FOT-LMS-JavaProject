@@ -197,14 +197,10 @@ private String techUser;
 
         loadMedicalTable();
 
-        //viewAttendance();
-
         createAttendanceViewTable();
 
 
-
-
-
+//attendance submit button
         atten_submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -213,6 +209,7 @@ private String techUser;
             }
         });
 
+//attendance edit button
         aedit_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -221,6 +218,7 @@ private String techUser;
         });
 
 
+//attendance edit select
         aeselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -240,7 +238,7 @@ private String techUser;
 
 
 
-
+//medical submit button
         medsubmit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -250,6 +248,7 @@ private String techUser;
         });
 
 
+//medical select
         medselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -265,6 +264,7 @@ private String techUser;
             }
         });
 
+        //medical edit
         mededit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -272,18 +272,23 @@ private String techUser;
             }
         });
 
+
         selectButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //viewAttendance();
             }
         });
+
+        //search button
         sebtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 searchAttendanceByIdOrCourse();
             }
         });
+
+        //attendance delete button
         atten_deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -291,6 +296,7 @@ private String techUser;
             }
         });
 
+        //select for delete
         deselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -308,6 +314,7 @@ private String techUser;
             }
         });
 
+        //search medical
         medsebtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -315,6 +322,7 @@ private String techUser;
             }
         });
 
+        //delete for medical select
         dmedselect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -329,6 +337,8 @@ private String techUser;
                 }
             }
         });
+
+        //delete button
         deleteButton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -336,6 +346,8 @@ private String techUser;
                 loadMedicalTable();
             }
         });
+
+        //attendance refresh button
         refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -355,6 +367,7 @@ private String techUser;
     }
 
 
+    //attendance table create
     private void createAttendanceTable() {
         String[] columns = {"Student ID", "Course Code", "Dep", "Date", "Type", "Present", "Hours", "Medical"};
         Object[][] data = {}; // or populate from DB later
@@ -369,6 +382,7 @@ private String techUser;
         header.setForeground(Color.BLACK);
     }
 
+    //Add attendance
     private void addAttendance() {
         stuid = attenstu_text.getText().trim();
         course = attencour_text.getText().trim();
@@ -437,6 +451,7 @@ private String techUser;
     }
 
 
+    //load attendance table (view)
     private void loadAttendanceTable() {
         String sql = "SELECT a.stuid, a.ccode, a.depid, a.sdate, a.ctype, " +
                 "CASE a.present WHEN 1 THEN 'Present' ELSE 'Absent' END AS status, " +
@@ -467,7 +482,7 @@ private String techUser;
                 String dep = rs.getString("depid");
                 String date = rs.getString("sdate");
                 String type = rs.getString("ctype");
-                String status = rs.getString("status"); // 'status' is the alias in the query
+                String status = rs.getString("status"); // 'status'
                 int hours = rs.getInt("hours");
                 String medical = rs.getString("medical");
 
@@ -488,6 +503,7 @@ private String techUser;
 
 
     // Edit Button Action (Save changes)
+
     private void editAttendance() {
         String stuId = aestu_text.getText().trim();
         String course = aecour_text.getText().trim();
@@ -551,6 +567,7 @@ private String techUser;
 
 }
 
+//search attendance by student id or course code
     private void searchAttendanceByIdOrCourse() {
         String stuId = sestu.getText().trim();
         String courseCode = secour.getText().trim();
@@ -608,6 +625,7 @@ private String techUser;
     }
 
 
+    //Delete attendance method
     private void deleteAttendance() {
         String stuId = aestu_text.getText().trim();
         String course = aecour_text.getText().trim();
@@ -675,8 +693,10 @@ private String techUser;
 
     }
 
-
+//-------------------------------------------------------------------------------------------------------
 //Medical add,edit,delete
+
+   //Add medical method
 private void addMedical() {
     stuid = medtextstu.getText().trim();
     course = medtextcourse.getText().trim();
@@ -697,7 +717,7 @@ private void addMedical() {
         return;
     }
 
-    // Check if the student has an absent status for that date and course
+    // Check if the student absent status for that date and course
     String checkStatusSql = "SELECT present FROM attendance WHERE stuid = ? AND ccode = ? AND sdate = ? ";
 
     try {
@@ -706,14 +726,14 @@ private void addMedical() {
         checkStmt.setString(1, stuid);
         checkStmt.setString(2, course);
         checkStmt.setDate(3, Date.valueOf(date));
-        //checkStmt.setString(4, type);
+
 
         ResultSet rs = checkStmt.executeQuery();
 
         if (rs.next()) {
             int presentStatus = rs.getInt("present");
 
-            // If the student is not absent (present status is not 0), do not allow adding medical
+            // If the student is not absent(0), can not adding medical
             if (presentStatus != 0) {
                 JOptionPane.showMessageDialog(null, "Medical can only be added for absent students.");
                 return;
@@ -729,19 +749,18 @@ private void addMedical() {
 
         pstmt.setString(1, stuid);
         pstmt.setString(2, course);
-        pstmt.setDate(3, Date.valueOf(date)); // Ensure date is in YYYY-MM-DD format
+        pstmt.setDate(3, Date.valueOf(date)); // date is in YYYY-MM-DD format
         pstmt.setString(4, des);
-        //pstmt.setString(5, type);
+
 
         pstmt.executeUpdate();
 
-        // Update the attendance to set msubmit = 1 (medical submitted) for that record
+        // Update the attendance (medical submitted)
         String updateSql = "UPDATE attendance SET msubmit = 1 WHERE stuid = ? AND ccode = ? AND sdate = ? AND present = 0 ";
         PreparedStatement updateStmt = conn.prepareStatement(updateSql);
         updateStmt.setString(1, stuid);
         updateStmt.setString(2, course);
         updateStmt.setDate(3, Date.valueOf(date));
-       // updateStmt.setString(4, type);
         updateStmt.executeUpdate();
 
         updateStmt.close();
@@ -761,7 +780,7 @@ private void addMedical() {
 }
 
 
-
+//load medical row
     private void loadMedicalTable() {
 
         DbConnector db = new DbConnector();
@@ -784,7 +803,7 @@ private void addMedical() {
 
             // You can use DefaultTableModel to populate JTable
             DefaultTableModel model = (DefaultTableModel) med_table.getModel();
-            model.setRowCount(0); // Clear existing data
+            model.setRowCount(0); // Clear
 
             while (rs.next()) {
                 int med = rs.getInt("medid");
@@ -808,6 +827,7 @@ private void addMedical() {
     }
 
 
+//Edit medical
     private void editMedical() {
         String mid = medid.getText().trim();
         String stuId = Emedstu.getText().trim();
@@ -861,6 +881,7 @@ private void addMedical() {
     }
 
 
+//search medical
     private void searchMedicalRecord() {
         String stuId = semedstu.getText().trim();
         String courseCode = semedcour.getText().trim();
@@ -891,7 +912,7 @@ private void addMedical() {
             ResultSet rs = pstmt.executeQuery();
 
             DefaultTableModel model = (DefaultTableModel) med_table.getModel();
-            model.setRowCount(0); // Clear table first
+            model.setRowCount(0); // Clear
 
             boolean foundRecords = false; // check if any records are found
 
@@ -922,6 +943,7 @@ private void addMedical() {
         }
     }
 
+//------------------------------------------------------------------------------------------
 
     private void deleteMedicalRecord() {
         String mid = medid.getText().trim();
@@ -972,9 +994,7 @@ private void addMedical() {
     }
 
 
-
-
-
+    //medical table create
     private void createMedicalTable() {
         String[] medcol = {"Medical ID","Student ID","Course Code","Date", "Description"};
         Object[][] data = {};
@@ -988,45 +1008,8 @@ private void addMedical() {
         header.setForeground(Color.BLACK);
     }
 
+    
 
-
-
-
-    private void viewAttendance() {
-        DbConnector db = new DbConnector();
-        Connection conn = db.getConnection();
-
-        String sql = "SELECT * FROM attendance";
-
-        try {
-
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-
-            // Set column headers only once
-            String[] columns = {"Student ID", "Course Code", "Date", "Type", "Present", "Hours", "Medical ID"};
-            DefaultTableModel model = new DefaultTableModel(columns, 0);
-            view_atten_table.setModel(model);
-
-            while (rs.next()) {
-                String stuid = rs.getString("stuid");
-                String course = rs.getString("ccode");
-                String date = rs.getString("sdate");
-                String type = rs.getString("ctype");
-                String status = rs.getString("status");
-                String hours = rs.getString("hours");
-                String med = rs.getString("medid");
-
-                model.addRow(new Object[]{stuid, course, date, type, status, hours, med});
-            }
-
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private void createAttendanceViewTable() {
         String[] latent = {"Student ID", "Course Code", "Date", "Type", "Present", "Hours", "Medical Submitted"};
@@ -1034,9 +1017,7 @@ private void addMedical() {
         view_atten_table.setModel(model);
     }
 
-    private void viewMedical(){
 
-    }
 
     public static void main(String[] args) {
         new TechOfficer("T001","TO0001");
