@@ -300,8 +300,42 @@ public class Lecturer {
         uploadAssingmentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String courseCodeForAssessments = stuCourseComboBox.getSelectedItem().toString();
+                int week = lecWeekComboBox.getSelectedIndex();
+
                 JFileChooser chooser = new JFileChooser();
-                chooser.showOpenDialog(null);
+                int result = chooser.showOpenDialog(null);
+
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File file = chooser.getSelectedFile();
+
+                    try {
+                        FileInputStream fis = new FileInputStream(file);
+                        DbConnector db = new DbConnector();
+                        conn = db.getConnection();
+
+                        String sql ="INSERT INTO assessments(ccode, week, file_name, file_data) VALUES(?,?,?,?)";
+                        try {
+                            PreparedStatement pstmt = conn.prepareStatement(sql);
+                            pstmt.setString(1,courseCodeForAssessments);
+                            pstmt.setInt(2,week);
+                            pstmt.setString(3,file.getName());
+                            pstmt.setBinaryStream(4,fis,(int)file.length());
+
+                            pstmt.executeUpdate();
+                            pstmt.close();
+                            conn.close();
+                        } catch (SQLException ex) {
+                            System.out.println("Error: " + ex.getMessage());
+                        }
+                        JOptionPane.showMessageDialog(null, "File uploaded successfully!");
+                        fis.close();
+                        chooser.setVisible(false);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Upload failed: " + ex.getMessage());
+                    }
+                }
             }
         });
 
