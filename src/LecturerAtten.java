@@ -34,15 +34,13 @@ public class LecturerAtten {
     private JLabel stuname;
     private JButton selectbtn;
     private JButton graatten;
-    private JPanel table2;
-    private JScrollBar scrollBar2;
-    private JTable showtable;
     private JButton lessatten;
-    private JButton equalatten;
     private JComboBox medcourse;
     private JButton medselect;
     private JButton medpercen;
     private JButton medgrater;
+    private JButton medless;
+    private JButton medTP;
 
     private String lecUser;
     private String lecName;
@@ -77,7 +75,7 @@ public class LecturerAtten {
 
 
         // Initialize the table
-        attendanceViewTable();
+        //attendanceViewTable();
         // Load courses for the student
         loadCoursesForLecturer();
 
@@ -104,12 +102,7 @@ public class LecturerAtten {
                 attendanceViewLess80();
             }
         });
-        equalatten.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                attendanceViewEqual();
-            }
-        });
+
 
         medselect.addActionListener(new ActionListener() {
             @Override
@@ -127,6 +120,18 @@ public class LecturerAtten {
             @Override
             public void actionPerformed(ActionEvent e) {
                 attendanceViewMedicalGrater80();
+            }
+        });
+        medless.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                attendanceViewMedicalLess80();
+            }
+        });
+        medTP.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                attendanceViewTheoryPractical();
             }
         });
     }
@@ -204,6 +209,11 @@ public class LecturerAtten {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         aviewtable.setModel(model);
 
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
+
         String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
 
         if (selectedCourse.isEmpty()) {
@@ -253,6 +263,11 @@ public class LecturerAtten {
         String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         aviewtable.setModel(model);
+
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
 
         String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
 
@@ -305,6 +320,11 @@ public class LecturerAtten {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         aviewtable.setModel(model);
 
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
+
         String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
 
         if (selectedCourse.isEmpty()) {
@@ -351,56 +371,7 @@ public class LecturerAtten {
         }
     }
 
-    private void attendanceViewEqual() {
-        String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        aviewtable.setModel(model);
 
-        String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
-
-        if (selectedCourse.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Please select a course.");
-            return;
-        }
-
-        DbConnector db = new DbConnector();
-        Connection conn = db.getConnection();
-        if (conn == null) {
-            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
-            return;
-        }
-
-        try {
-
-
-            // Prepare the stored procedure call
-            CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudentEqual( ?)}");
-            stmt.setString(1, selectedCourse);  // Pass the selected course code to the procedure
-
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                        rs.getString("stuid"),
-                        rs.getString("fname"),
-                        rs.getString("lname"),
-                        rs.getString("ccode"),
-                        rs.getDouble("attendance_percentage")
-                });
-            }
-
-            rs.close();
-            stmt.close();
-            db.close();
-
-        } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace to console for debugging
-            JOptionPane.showMessageDialog(null, "Error loading attendance percentage: " + e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();  // General exception handling
-            JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
-        }
-    }
 
 
 
@@ -409,6 +380,8 @@ public class LecturerAtten {
         String[] columns = {"Sutdent ID","fname","lname","Week", "Date", "Type", "Hours", "Status", "Medical Submitted"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
         aviewtable.setModel(model);
+
+
 
         JTableHeader header = aviewtable.getTableHeader();
         header.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -485,6 +458,11 @@ public class LecturerAtten {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         aviewtable.setModel(model);
 
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
+
         String selectedCourse = medcourse.getSelectedItem() != null ? medcourse.getSelectedItem().toString() : "";
 
         if (selectedCourse.isEmpty()) {
@@ -536,6 +514,11 @@ public class LecturerAtten {
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         aviewtable.setModel(model);
 
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
+
         String selectedCourse = medcourse.getSelectedItem() != null ? medcourse.getSelectedItem().toString() : "";
 
         if (selectedCourse.isEmpty()) {
@@ -583,7 +566,122 @@ public class LecturerAtten {
     }
 
 
+    private void attendanceViewMedicalLess80() {
+        String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Attendance %"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        aviewtable.setModel(model);
 
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
+
+        String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
+
+        if (selectedCourse.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please select a course.");
+            return;
+        }
+
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
+        try {
+
+
+            // Prepare the stored procedure call
+            CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudentWithLess( ?)}");
+            stmt.setString(1, selectedCourse);  // Pass the selected course code to the procedure
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                        rs.getString("stuid"),
+                        rs.getString("fname"),
+                        rs.getString("lname"),
+                        rs.getString("ccode"),
+                        rs.getDouble("attendance_percentage")
+                });
+            }
+
+            rs.close();
+            stmt.close();
+            db.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();  // Print stack trace to console for debugging
+            JOptionPane.showMessageDialog(null, "Error loading attendance percentage: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();  // General exception handling
+            JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+
+    //Theory practical separate
+
+    private void attendanceViewTheoryPractical() {
+        String[] columnNames = {"Student ID", "First Name", "Last Name", "Course Code", "Type", "Attendance %"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        aviewtable.setModel(model);
+
+        JTableHeader header = aviewtable.getTableHeader();
+        header.setFont(new Font("SansSerif", Font.BOLD, 14));
+        header.setBackground(new Color(204, 255, 204));
+        header.setForeground(Color.BLACK);
+
+        String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
+
+        if (selectedCourse.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please select a course.");
+            return;
+        }
+
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(null, "Failed to connect to database!");
+            return;
+        }
+
+        try {
+            CallableStatement stmt = conn.prepareCall("{CALL ShowCourseAttendancePerStudentTP(?)}");
+            stmt.setString(1, selectedCourse);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                        rs.getString("stuid"),
+                        rs.getString("fname"),
+                        rs.getString("lname"),
+                        rs.getString("ccode"),
+                        rs.getString("ctype"),  // Add this line to show theory/practical
+                        rs.getDouble("attendance_percentage")
+                });
+            }
+
+            rs.close();
+            stmt.close();
+            db.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error loading attendance percentage: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+
+
+/*
     private void attendanceViewTable() {
         // Initialize table with column names
         String[] latent = {"Student ID", "Course Code", "Date", "Type", "Present", "Hours", "Medical Submitted"};
@@ -591,6 +689,8 @@ public class LecturerAtten {
         aviewtable.setModel(model);
     }
 
+
+ */
 
     public static void main(String[] args) {
         new LecturerAtten("L0003", "LC0003");

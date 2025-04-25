@@ -128,7 +128,6 @@ public class TechOfficer {
     private JButton medsebtn;
     private JTextField medid;
     private JButton dmedselect;
-    private JComboBox medctype;
     private JButton attenselect;
 
     private String stuid;
@@ -683,10 +682,10 @@ private void addMedical() {
     course = medtextcourse.getText().trim();
     date = medtextdate.getText().trim();
     des = medtextdes.getText();
-    type = medctype.getSelectedItem().toString();
+   // type = medctype.getSelectedItem().toString();
 
     // Validate input
-    if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || des == null || type == null) {
+    if (stuid.isEmpty() || course.isEmpty() || date.isEmpty() || des == null ) {
         JOptionPane.showMessageDialog(null, "Please fill in all fields.");
         return;
     }
@@ -699,7 +698,7 @@ private void addMedical() {
     }
 
     // Check if the student has an absent status for that date and course
-    String checkStatusSql = "SELECT present FROM attendance WHERE stuid = ? AND ccode = ? AND sdate = ? AND ctype = ?";
+    String checkStatusSql = "SELECT present FROM attendance WHERE stuid = ? AND ccode = ? AND sdate = ? ";
 
     try {
 
@@ -707,7 +706,7 @@ private void addMedical() {
         checkStmt.setString(1, stuid);
         checkStmt.setString(2, course);
         checkStmt.setDate(3, Date.valueOf(date));
-        checkStmt.setString(4, type);
+        //checkStmt.setString(4, type);
 
         ResultSet rs = checkStmt.executeQuery();
 
@@ -725,24 +724,24 @@ private void addMedical() {
         }
 
         // Insert the medical record
-        String sql = "INSERT INTO medical (stuid, ccode, mdate, mdescription,ctype) VALUES (?, ?, ?, ?,?)";
+        String sql = "INSERT INTO medical (stuid, ccode, mdate, mdescription) VALUES (?, ?, ?, ?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
 
         pstmt.setString(1, stuid);
         pstmt.setString(2, course);
         pstmt.setDate(3, Date.valueOf(date)); // Ensure date is in YYYY-MM-DD format
         pstmt.setString(4, des);
-        pstmt.setString(5, type);
+        //pstmt.setString(5, type);
 
         pstmt.executeUpdate();
 
         // Update the attendance to set msubmit = 1 (medical submitted) for that record
-        String updateSql = "UPDATE attendance SET msubmit = 1 WHERE stuid = ? AND ccode = ? AND sdate = ? AND present = 0 AND ctype = ?";
+        String updateSql = "UPDATE attendance SET msubmit = 1 WHERE stuid = ? AND ccode = ? AND sdate = ? AND present = 0 ";
         PreparedStatement updateStmt = conn.prepareStatement(updateSql);
         updateStmt.setString(1, stuid);
         updateStmt.setString(2, course);
         updateStmt.setDate(3, Date.valueOf(date));
-        updateStmt.setString(4, type);
+       // updateStmt.setString(4, type);
         updateStmt.executeUpdate();
 
         updateStmt.close();
@@ -772,7 +771,7 @@ private void addMedical() {
             return;
         }
 
-        String sql = "SELECT m.medid, m.stuid, m.ccode,m.ctype, m.mdate, m.mdescription " +
+        String sql = "SELECT m.medid, m.stuid, m.ccode, m.mdate, m.mdescription " +
                 "FROM medical m " +
                 "JOIN student s ON m.stuid = s.stuid " +
                 "ORDER BY m.mdate DESC";
@@ -791,12 +790,11 @@ private void addMedical() {
                 int med = rs.getInt("medid");
                 String stuid = rs.getString("stuid");
                 String course = rs.getString("ccode");
-                String type = rs.getString("ctype");
                 String date = rs.getString("mdate");
                 String des = rs.getString("mdescription");
 
 
-                model.addRow(new Object[]{med,stuid, course,type, date, des});
+                model.addRow(new Object[]{med,stuid, course, date, des});
             }
 
             rs.close();
@@ -874,7 +872,7 @@ private void addMedical() {
             return;
         }
 
-        String sql = "SELECT m.medid, m.stuid, m.ccode,m.ctype, m.mdate, m.mdescription " +
+        String sql = "SELECT m.medid, m.stuid, m.ccode, m.mdate, m.mdescription " +
                 "FROM medical m " +
                 "JOIN student s ON m.stuid = s.stuid " +
                 "WHERE (? = '' OR m.stuid = ?) AND (? = '' OR m.ccode = ?) " +
@@ -895,19 +893,18 @@ private void addMedical() {
             DefaultTableModel model = (DefaultTableModel) med_table.getModel();
             model.setRowCount(0); // Clear table first
 
-            boolean foundRecords = false; // Flag to check if any records are found
+            boolean foundRecords = false; // check if any records are found
 
             while (rs.next()) {
-                foundRecords = true; // Set flag to true when records are found
+                foundRecords = true; //  true when records are found
 
                 String mid = rs.getString("medid");
                 String id = rs.getString("stuid");
                 String course = rs.getString("ccode");
-                String type = rs.getString("ctype");
                 String date = rs.getString("mdate");
                 String description = rs.getString("mdescription");
 
-                model.addRow(new Object[]{mid, id, course,type, date, description});
+                model.addRow(new Object[]{mid, id, course, date, description});
             }
 
             // If no records are found, show a message
@@ -979,7 +976,7 @@ private void addMedical() {
 
 
     private void createMedicalTable() {
-        String[] medcol = {"Medical ID","Student ID","Course Code","Type","Date", "Description"};
+        String[] medcol = {"Medical ID","Student ID","Course Code","Date", "Description"};
         Object[][] data = {};
 
         DefaultTableModel model = new DefaultTableModel(data, medcol);
