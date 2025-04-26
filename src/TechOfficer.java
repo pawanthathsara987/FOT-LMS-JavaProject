@@ -257,8 +257,8 @@ private String techUser;
                     medid.setText(med_table.getValueAt(selectedRow, 0).toString());
                     Emedstu.setText(med_table.getValueAt(selectedRow, 1).toString());
                     Emedcour.setText(med_table.getValueAt(selectedRow, 2).toString());
-                    Emeddate.setText(med_table.getValueAt(selectedRow, 4).toString());
-                    Emeddes.setText(med_table.getValueAt(selectedRow, 5).toString());
+                    Emeddate.setText(med_table.getValueAt(selectedRow, 3).toString());
+                    Emeddes.setText(med_table.getValueAt(selectedRow, 4).toString());
 
                 }
             }

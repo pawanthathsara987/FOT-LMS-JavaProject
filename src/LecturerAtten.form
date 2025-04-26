@@ -44,7 +44,9 @@
                   </component>
                   <component id="73966" class="javax.swing.JButton" binding="medicalButton" default-binding="true">
                     <constraints>
-                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="40" height="-1"/>
+                      </grid>
                     </constraints>
                     <properties>
                       <background color="-6767156"/>
@@ -172,7 +174,8 @@
                                 <constraints/>
                                 <properties>
                                   <background color="-3677755"/>
-                                  <text value="view"/>
+                                  <preferredSize width="104" height="28"/>
+                                  <text value="View"/>
                                 </properties>
                               </component>
                               <hspacer id="966c2">
@@ -182,7 +185,7 @@
                                 <constraints/>
                                 <properties>
                                   <background color="-3677755"/>
-                                  <text value="percentage"/>
+                                  <text value="Percentage"/>
                                 </properties>
                               </component>
                               <hspacer id="367e0">
@@ -192,6 +195,7 @@
                                 <constraints/>
                                 <properties>
                                   <background color="-3677755"/>
+                                  <preferredSize width="104" height="28"/>
                                   <text value="Grater80"/>
                                 </properties>
                               </component>
@@ -202,6 +206,7 @@
                                 <constraints/>
                                 <properties>
                                   <background color="-3677755"/>
+                                  <preferredSize width="104" height="28"/>
                                   <text value="Less80"/>
                                 </properties>
                               </component>

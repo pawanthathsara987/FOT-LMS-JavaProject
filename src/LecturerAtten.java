@@ -344,10 +344,10 @@ public class LecturerAtten {
             db.close();
 
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace to console for debugging
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error loading attendance percentage: " + e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();  // General exception handling
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An unexpected error occurred: " + e.getMessage());
         }
     }
