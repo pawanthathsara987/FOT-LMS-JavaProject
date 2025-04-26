@@ -285,6 +285,8 @@ public class LecturerAtten {
             stmt.close();
             db.close();
 
+            selectstuid.setText("");
+
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error loading attendance: " + e.getMessage());
@@ -615,7 +617,7 @@ public class LecturerAtten {
         header.setBackground(new Color(204, 255, 204));
         header.setForeground(Color.BLACK);
 
-        String selectedCourse = selectcour.getSelectedItem() != null ? selectcour.getSelectedItem().toString() : "";
+        String selectedCourse = medcourse.getSelectedItem() != null ? medcourse.getSelectedItem().toString() : "";
 
         if (selectedCourse.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Please select a course.");
@@ -722,6 +724,6 @@ public class LecturerAtten {
 
 
     public static void main(String[] args) {
-        new LecturerAtten("L0003", "LC0003");
+        new LecturerAtten("L0002", "LC0002");
     }
 }
