@@ -1,51 +1,106 @@
 package StuNotice;
 
+import Database.DbConnector;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.*;
 
 public class StuNotice {
     private JPanel rootPanel;
+    private JTable noticeInfo;
+    private JTextArea noticeDescription;
+    private JLabel noticeTitle;
     private JTable showTable;
+    private  JFrame frame;
+
+    private String stuUsername;
 
 
+    public StuNotice(String stuUsername) {
+        frame = new JFrame("Notice");
+        frame.setContentPane(rootPanel);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(1100, 750);
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
 
-    public StuNotice() {
-        createTable();
+        noticeDescription.setVisible(false);
+
+        this.stuUsername = stuUsername;
+
+        showNotice();
+
+        noticeInfo.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+            }
+        });
+        noticeInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showNoticeDetails();
+            }
+        });
     }
 
+    public void showNotice() {
 
-    public JPanel getRootPanel() {
-        return rootPanel;
+        DbConnector db = new DbConnector();
+        Connection conn = db.getConnection();
+        if (conn == null) {
+            return;
+        }
+
+        String showNotice_sql = "select title, content, posteddate from notice";
+
+        try(PreparedStatement stmt = conn.prepareStatement(showNotice_sql)) {
+            ResultSet rs = stmt.executeQuery();
+            ResultSetMetaData rsmd = rs.getMetaData();
+            DefaultTableModel model = (DefaultTableModel) noticeInfo.getModel();
+
+            model.setRowCount(0);
+
+            int columnsNumber = rsmd.getColumnCount();
+            String[] columnNames = new String[columnsNumber];
+            for (int i = 0; i < columnsNumber; i++) {
+                columnNames[i] = rsmd.getColumnName(i + 1);
+            }
+            model.setColumnIdentifiers(columnNames);
+
+            while (rs.next()) {
+                Object[] rowData = new Object[columnsNumber];
+                for (int i = 0; i < columnsNumber; i++) {
+                    rowData[i] = rs.getObject(i + 1);
+                }
+                model.addRow(rowData);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error showing notice details: " + e.getMessage(), e);
+        }
     }
 
-    public void createTable(){
-        Object [] [] data = {
-                {"2025/02/15","Student Union","teclms.ruh.ac.lk"},
-                {"2025/02/15","Student Union","teclms.ruh.ac.lk"},
-                {"2025/02/15","Student Union","teclms.ruh.ac.lk"},
-                {"2025/02/15","Student Union","teclms.ruh.ac.lk"},
-                {"2025/02/15","Student Union","teclms.ruh.ac.lk"},
+    public void showNoticeDetails() {
+        int selectedRow = noticeInfo.getSelectedRow();
+        if (selectedRow >= 0) {
+            String title = noticeInfo.getModel().getValueAt(selectedRow, 0).toString();
+            String content = noticeInfo.getModel().getValueAt(selectedRow, 1).toString();
 
-
-        };
-
-        showTable.setModel(new DefaultTableModel(
-                data,
-                new String [] {"Date","Title","Download Link"}
-        ));
-
-        TableColumnModel columns = showTable.getColumnModel();
-        columns.getColumn(0).setMinWidth(250);
-
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        columns.getColumn(0).setCellRenderer(centerRenderer);
-        columns.getColumn(1).setCellRenderer(centerRenderer);
-        columns.getColumn(2).setCellRenderer(centerRenderer);
-
-
+            noticeTitle.setText(title);
+            noticeDescription.setVisible(true);
+            noticeDescription.setText(content);
+        } else {
+            noticeTitle.setText("");
+            noticeDescription.setText("");
+        }
     }
+
 
 }

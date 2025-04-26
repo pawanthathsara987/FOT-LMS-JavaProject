@@ -3,82 +3,65 @@ package Database;
 import java.sql.*;
 
 public class DbConnector {
+    private static final String URL = "jdbc:mysql://localhost:3306/javalms";
+    private static final String USER = "root";
+    private static final String PASSWORD = "1234";
 
-    private static String url = "jdbc:mysql://localhost:3306/javalms";
-    private static String user = "root";
-    private static String password = "1234";
-    private static Connection conn = null;
-    private static Statement stmt = null;
-
-    private static void registerDriver(){
+    // Load the JDBC driver once
+    static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            System.out.println("Driver not found" + e.getMessage());
+            System.err.println("MySQL JDBC Driver not found: " + e.getMessage());
         }
     }
 
-    public static Connection getConnection(){
-
-        registerDriver();
-
+    // Public method to get a new DB connection
+    public static Connection getConnection() {
         try {
-            conn = DriverManager.getConnection(url, user, password);
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            System.out.println("Connection error" + e.getMessage());
+            System.err.println("Database connection failed: " + e.getMessage());
+            return null;
         }
-        return conn;
     }
 
-    public void select(String sql){
+    // Simple SELECT for testing (for learning only — not recommended in production)
+    public void select(String sql) {
+        try (Connection conn = getConnection();
+             Statement stmt = conn != null ? conn.createStatement() : null;
+             ResultSet rs = stmt != null ? stmt.executeQuery(sql) : null) {
 
-        try {
-            stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while(rs.next()){
+            if (rs != null) {
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
 
-
-
-                System.out.println(
-                        rs.getString(1)+ ", " +
-                                rs.getString(2) + ", " +
-                                rs.getString(3) + ", " +
-                                rs.getString(4) + ", " +
-                                rs.getString(5) + ", " +
-                                rs.getString(6) + ", " +
-                                rs.getString(7) + ", " +
-                                rs.getString(8) + ", " +
-                                rs.getString(9));
+                while (rs.next()) {
+                    for (int i = 1; i <= columnCount; i++) {
+                        System.out.print(rs.getString(i));
+                        if (i < columnCount) System.out.print(", ");
+                    }
+                    System.out.println();
+                }
             }
+
         } catch (SQLException e) {
-            System.out.println("Statement error" + e.getMessage());
+            System.err.println("Select error: " + e.getMessage());
         }
     }
 
-    public void insert(String sql){
-        try {
-            stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-        } catch (SQLException e) {
-            System.out.println("Statement error" + e.getMessage());
-        }
-    }
+    // Generic update/insert/delete method
+    public void executeUpdate(String sql) {
+        try (Connection conn = getConnection();
+             Statement stmt = conn != null ? conn.createStatement() : null) {
 
-    public void update(String sql){
-        try {
-            stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
-        } catch (SQLException e) {
-            System.out.println("Statement error" + e.getMessage());
-        }
-    }
+            if (stmt != null) {
+                int rows = stmt.executeUpdate(sql);
+                System.out.println("Query OK, " + rows + " row(s) affected.");
+            }
 
-    public void delete(String sql){
-        try {
-            stmt = conn.createStatement();
-            stmt.executeUpdate(sql);
         } catch (SQLException e) {
-            System.out.println("Statement error" + e.getMessage());
+            System.err.println("Execution error: " + e.getMessage());
         }
     }
 }

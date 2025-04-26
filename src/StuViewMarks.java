@@ -5,16 +5,20 @@ import javax.swing.table.TableColumnModel;
 
 public class StuViewMarks {
     private JPanel rootPanel;
+    private JPanel MainPanal;
     private JPanel title;
     private JPanel Table;
     private JPanel middle;
-    private JPanel botem;
-    private JButton button1;
-    private JTable showTable;
+    private JTable table1;
 
 
     public StuViewMarks() {
         createTable();
+    }
+
+
+    public JPanel getRootPanel() {
+        return MainPanal;
     }
 
     public void createTable() {
@@ -26,11 +30,11 @@ public class StuViewMarks {
                 {"ICT2112", "A"},
         };
 
-        showTable.setModel(new DefaultTableModel(
+        table1.setModel(new DefaultTableModel(
                 data,
                 new String[]{"Subject code", "Results"}
         ));
-        TableColumnModel columns = showTable.getColumnModel();
+        TableColumnModel columns = table1.getColumnModel();
         columns.getColumn(0).setMinWidth(250);
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
