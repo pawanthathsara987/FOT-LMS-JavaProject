@@ -6,6 +6,14 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.*;
 
 public class StuCourseMaterial {
@@ -28,7 +36,8 @@ public class StuCourseMaterial {
     private String stuUsername;
     private String depid = null;
     private String level = null;
-    private String[][] course_list = new String[10][1];
+    private String fname = null;
+    private String[] course_list = new String[10];
 
     public StuCourseMaterial(String stuUsername) {
         frame = new JFrame("Student Course Material");
@@ -46,7 +55,42 @@ public class StuCourseMaterial {
         searchMaterial.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showLectureMaterials();
+                int material = materialList.getSelectedIndex();
+                int cname = courseName.getSelectedIndex();
+                String ccode = course_list[cname];
+
+                if (material == 0) {
+                    showStuLecnotes(course_list[cname]);
+                } else if (material == 1) {
+                    showStuQuizes(course_list[cname]);
+                } else if (material == 2) {
+                    showStuAssignments(course_list[cname]);
+                }
+
+
+            }
+        });
+        materialInfo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                fname = materialInfo.getModel().getValueAt(materialInfo.getSelectedRow(), 2).toString();
+                System.out.println(fname);
+            }
+        });
+        materialList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (materialList.getSelectedIndex() == 0) {
+                    downloadNote.setVisible(true);
+                } else {
+                    downloadNote.setVisible(false);
+                }
+            }
+        });
+        downloadNote.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                downloadNote();
             }
         });
     }
@@ -55,6 +99,9 @@ public class StuCourseMaterial {
         String getStuDepartment_sql = "SELECT depid, stulevel FROM student WHERE username = ?";
         String showStudentCourses_sql = "SELECT ccode, cname FROM course WHERE depid = ? AND clevel = ?";
 
+        if (materialList.getSelectedIndex() == 0) {
+            downloadNote.setVisible(true);
+        }
         DbConnector db = new DbConnector();
         try (Connection conn = db.getConnection();
              PreparedStatement stmt1 = conn.prepareStatement(getStuDepartment_sql);
@@ -86,9 +133,9 @@ public class StuCourseMaterial {
             int i = 0;
             while (rs2.next()) {
                 String course = rs2.getString("cname");
-                course_list[i] = new String[]{course};
-                course_list[i][0] = new String(rs2.getString("ccode"));
+                course_list[i] = rs2.getString("ccode");
                 courseName.addItem(course);
+                i++;
             }
 
         } catch (SQLException e) {
@@ -97,12 +144,11 @@ public class StuCourseMaterial {
         }
     }
 
-    public void showStuQuizes() {
+    public void showStuQuizes(String ccode) {
         String showStuQuiz_sql = "SELECT ccode, quiz_number, quiz_link FROM quiz WHERE ccode = ?";
-        String ccode = null;
         for (int i = 0; i < course_list.length; i++) {
             if (courseName.getSelectedItem().toString().equals(course_list[i])) {
-                ccode = course_list[i][0];
+                ccode = course_list[i];
             }
         }
         System.out.println(ccode);
@@ -141,14 +187,8 @@ public class StuCourseMaterial {
         }
     }
 
-    public void showStuAssignments() {
+    public void showStuAssignments(String ccode) {
         String showStuAssignment_sql = "SELECT ccode, week, file_name FROM assessments WHERE ccode = ?";
-        String ccode = null;
-        for (int i = 0; i < course_list.length; i++) {
-            if (courseName.getSelectedItem().toString().equals(course_list[i][0])) {
-                ccode = course_list[i][0];
-            }
-        }
 
         DbConnector db = new DbConnector();
         Connection conn = db.getConnection();
@@ -184,14 +224,8 @@ public class StuCourseMaterial {
         }
     }
 
-    public void showStuLecnotes() {
+    public void showStuLecnotes(String ccode) {
         String showStuLecnotes_sql = "SELECT ccode, week, file_name FROM lecNotes WHERE ccode = ?";
-        String ccode = null;
-        for (int i = 0; i < course_list.length; i++) {
-            if (courseName.getSelectedItem().toString().equals(course_list[i][0])) {
-                ccode = course_list[i][0];
-            }
-        }
 
         DbConnector db = new DbConnector();
         Connection conn = db.getConnection();
@@ -227,15 +261,50 @@ public class StuCourseMaterial {
         }
     }
 
-    public void showLectureMaterials() {
-        if (materialList.getSelectedIndex() ==  0) {
-            System.out.println("lecn");
-            showStuLecnotes();
-        } else if (materialList.getSelectedIndex() == 1) {
-            System.out.println("qui");
-            showStuQuizes();
-        } else if (materialList.getSelectedIndex() == 2) {
-            showStuAssignments();
+    public void downloadNote() {
+        if (fname == null || fname.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "No file selected");
+            return;
+        }
+
+        // Use the absolute path to the Resources directory
+        Path currentDir = Paths.get(System.getProperty("user.dir"));
+        Path basePath = currentDir.getParent().resolve(Paths.get("Resources", "Lecturer", "lectureNotes"));
+        Path source = basePath.resolve(fname);
+
+        // Debugging: Print the resolved source path
+        System.out.println("Attempting to access source file: " + source.toAbsolutePath());
+        System.out.println("File name from table: " + fname);
+
+        // Sanitize file name to prevent path traversal
+        if (!source.getFileName().toString().equals(fname)) {
+            JOptionPane.showMessageDialog(frame, "Invalid file name");
+            return;
+        }
+
+        try {
+            // Check if source file exists
+            if (!Files.exists(source)) {
+                throw new FileNotFoundException("File not found: " + source.toAbsolutePath());
+            }
+
+            // Define destination path (e.g., user's home directory or a specific folder)
+            Path downloadDir = Paths.get(System.getProperty("user.home"), "Downloads", "CourseMaterials");
+            Path destination = downloadDir.resolve(fname);
+
+            // Create parent directories if they don't exist
+            Files.createDirectories(downloadDir);
+
+            // Copy file with REPLACE_EXISTING option to overwrite if necessary
+            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+            JOptionPane.showMessageDialog(frame, "File downloaded successfully to: " + destination);
+
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage());
+        } catch (SecurityException e) {
+            JOptionPane.showMessageDialog(frame, "Permission denied: " + e.getMessage());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(frame, "Failed to download file: " + e.getMessage());
         }
     }
 }
