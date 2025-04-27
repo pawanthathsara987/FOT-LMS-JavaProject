@@ -331,8 +331,8 @@ private String techUser;
                     medid.setText(med_table.getValueAt(selectedRow, 0).toString());
                     Emedstu.setText(med_table.getValueAt(selectedRow, 1).toString());
                     Emedcour.setText(med_table.getValueAt(selectedRow, 2).toString());
-                    Emeddate.setText(med_table.getValueAt(selectedRow, 4).toString());
-                    Emeddes.setText(med_table.getValueAt(selectedRow, 5).toString());
+                    Emeddate.setText(med_table.getValueAt(selectedRow, 3).toString());
+                    Emeddes.setText(med_table.getValueAt(selectedRow, 4).toString());
 
                 }
             }
@@ -974,6 +974,14 @@ private void addMedical() {
 
             int deleted = pstmt.executeUpdate();
 
+            String updateSql = "UPDATE attendance SET msubmit = 0 WHERE stuid = ? AND ccode = ? AND sdate = ? AND present = 0 ";
+            PreparedStatement updateStmt = conn.prepareStatement(updateSql);
+            updateStmt.setString(1, stuid);
+            updateStmt.setString(2, course);
+            updateStmt.setDate(3, Date.valueOf(date));
+            updateStmt.executeUpdate();
+
+            updateStmt.close();
             pstmt.close();
             conn.close();
 
@@ -983,6 +991,7 @@ private void addMedical() {
             } else {
                 JOptionPane.showMessageDialog(null, "Delete failed. Record not found.");
             }
+
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Database error occurred.");
