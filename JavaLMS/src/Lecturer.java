@@ -4,12 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +66,6 @@ public class Lecturer {
     private JComboBox lecWeekComboBox;
     private JPanel viewGradesAndGPA;
 
-    private JButton VIEWButton;
     private JLabel lecNameLabel;
     private JPanel actionButtons;
     private JPanel addLectureMaterialButtonPanel;
@@ -92,6 +87,9 @@ public class Lecturer {
     private JTextField quizLinkTextField;
     private JButton uploadButton;
     private JComboBox selectQuizNumber;
+    private JComboBox selectCourseForGradeComboBox;
+    private JTable gradesTable;
+    private JPanel gradesTablePanel;
 
 
     private String stuid;
@@ -182,7 +180,221 @@ public class Lecturer {
                 }
             }
         });
+        selectCourseForGradeComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String courCode = selectCourseForGradeComboBox.getSelectedItem().toString();
 
+                if (courCode.equals("ICT2122")){
+                    DbConnector db = new DbConnector();
+                    conn = db.getConnection();
+
+                    String courseCode = selectCourseForGradeComboBox.getSelectedItem().toString();
+                    String sql = "CALL calculate_grades_ICT2122(?)";
+
+                    try {
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, courseCode);
+                        ResultSet rs = pstmt.executeQuery();
+
+                        String[] columnNames = {"stuid", "ccode", "total_marks", "grade"};
+                        DefaultTableModel model = new DefaultTableModel(columnNames,0);
+
+                        gradesTable.removeAll();
+                        while (rs.next()) {
+                            Object[] row = {
+                                    rs.getString("stuid"),
+                                    rs.getString("ccode"),
+                                    rs.getDouble("total_marks"),
+                                    rs.getString("grade")
+                            };
+                            model.addRow(row);
+                        }
+                        gradesTable.setModel(model);
+                        gradesTable.repaint();
+                        gradesTable.revalidate();
+
+                        pstmt.close();
+                        rs.close();
+                        conn.close();
+
+                    } catch (SQLException ex) {
+                        System.out.println("Error: " + ex.getMessage());
+                    }
+                } else if (courCode.equals("ICT2133")) {
+                    DbConnector db = new DbConnector();
+                    conn = db.getConnection();
+
+                    String courseCode = selectCourseForGradeComboBox.getSelectedItem().toString();
+                    String sql = "CALL calculate_grades_ICT2133(?)";
+
+                    try {
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, courseCode);
+                        ResultSet rs = pstmt.executeQuery();
+
+                        String[] columnNames = {"stuid", "ccode", "total_marks", "grade"};
+                        DefaultTableModel model = new DefaultTableModel(columnNames,0);
+
+                        gradesTable.removeAll();
+                        while (rs.next()) {
+                            Object[] row = {
+                                    rs.getString("stuid"),
+                                    rs.getString("ccode"),
+                                    rs.getDouble("total_marks"),
+                                    rs.getString("grade")
+                            };
+                            model.addRow(row);
+                        }
+                        gradesTable.setModel(model);
+                        gradesTable.repaint();
+                        gradesTable.revalidate();
+
+                        pstmt.close();
+                        rs.close();
+                        conn.close();
+
+                    } catch (SQLException ex) {
+                        System.out.println("Error: " + ex.getMessage());
+                    }
+                } else if (courCode.equals("ICT2113")) {
+                    DbConnector db = new DbConnector();
+                    conn = db.getConnection();
+
+                    String courseCode = selectCourseForGradeComboBox.getSelectedItem().toString();
+                    String sql = "CALL calculate_grades_ICT2113(?)";
+
+                    try {
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, courseCode);
+                        ResultSet rs = pstmt.executeQuery();
+
+                        String[] columnNames = {"stuid", "ccode", "total_marks", "grade"};
+                        DefaultTableModel model = new DefaultTableModel(columnNames,0);
+
+                        gradesTable.removeAll();
+                        while (rs.next()) {
+                            Object[] row = {
+                                    rs.getString("stuid"),
+                                    rs.getString("ccode"),
+                                    rs.getDouble("total_marks"),
+                                    rs.getString("grade")
+                            };
+                            model.addRow(row);
+                        }
+                        gradesTable.setModel(model);
+                        gradesTable.repaint();
+                        gradesTable.revalidate();
+
+                        pstmt.close();
+                        rs.close();
+                        conn.close();
+
+                    } catch (SQLException ex) {
+                        System.out.println("Error: " + ex.getMessage());
+                    }
+                } else if (courCode.equals("ICT2142")) {
+                    DbConnector db = new DbConnector();
+                    conn = db.getConnection();
+
+                    String courseCode = selectCourseForGradeComboBox.getSelectedItem().toString();
+                    String sql = "CALL calculate_grades_ICT2142(?)";
+
+                    try {
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, courseCode);
+                        ResultSet rs = pstmt.executeQuery();
+
+                        String[] columnNames = {"stuid", "ccode", "total_marks", "grade"};
+                        DefaultTableModel model = new DefaultTableModel(columnNames,0);
+
+                        gradesTable.removeAll();
+                        while (rs.next()) {
+                            Object[] row = {
+                                    rs.getString("stuid"),
+                                    rs.getString("ccode"),
+                                    rs.getDouble("total_marks"),
+                                    rs.getString("grade")
+                            };
+                            model.addRow(row);
+                        }
+                        gradesTable.setModel(model);
+                        gradesTable.repaint();
+                        gradesTable.revalidate();
+
+                        pstmt.close();
+                        rs.close();
+                        conn.close();
+
+                    } catch (SQLException ex) {
+                        System.out.println("Error: " + ex.getMessage());
+                    }
+                } else if (courCode.equals("ICT2152")) {
+                    DbConnector db = new DbConnector();
+                    conn = db.getConnection();
+
+                    String courseCode = selectCourseForGradeComboBox.getSelectedItem().toString();
+                    String sql = "CALL calculate_grades_ICT2152(?)";
+
+                    try {
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, courseCode);
+                        ResultSet rs = pstmt.executeQuery();
+
+                        String[] columnNames = {"stuid", "ccode", "total_marks", "grade"};
+                        DefaultTableModel model = new DefaultTableModel(columnNames,0);
+
+                        gradesTable.removeAll();
+                        while (rs.next()) {
+                            Object[] row = {
+                                    rs.getString("stuid"),
+                                    rs.getString("ccode"),
+                                    rs.getDouble("total_marks"),
+                                    rs.getString("grade")
+                            };
+                            model.addRow(row);
+                        }
+                        gradesTable.setModel(model);
+                        gradesTable.repaint();
+                        gradesTable.revalidate();
+
+                        pstmt.close();
+                        rs.close();
+                        conn.close();
+
+                    } catch (SQLException ex) {
+                        System.out.println("Error: " + ex.getMessage());
+                    }
+                }
+            }
+
+            public void insertGrade(String stuid, String ccode, double totalMarks, String grade){
+                DbConnector db = new DbConnector();
+                conn = db.getConnection();
+
+                String stuid2 = stuid;
+                String ccode2 = ccode;
+                double totalMarks2 = totalMarks;
+                String grade2 = grade;
+
+                String sql = "INSERT INTO grades(stuid, ccode, total_marks, grade) VALUES (?,?,?,?)";
+
+                try {
+                    PreparedStatement pstmt = conn.prepareStatement(sql);
+                    pstmt.setString(1, stuid2);
+                    pstmt.setString(2, ccode2);
+                    pstmt.setDouble(3, totalMarks2);
+                    pstmt.setString(4, grade2);
+                    pstmt.executeUpdate();
+                    //JOptionPane.showMessageDialog(null, "Grade added successfully!");
+                    pstmt.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }
+
+        });
 
     }
     public Lecturer(String lecUsername, String lecName) {
@@ -413,7 +625,9 @@ public class Lecturer {
                 columns.put("Quiz 1","quiz_1");
                 columns.put("Quiz 2","quiz_2");
                 columns.put("Quiz 3","quiz_3");
-                columns.put("Assignment Marks","assesment");
+                columns.put("Quiz 4","quiz_4");
+                columns.put("Assignment 1","assesment_1");
+                columns.put("Assignment 2","assesment_2");
                 columns.put("Mid Exam Marks","m_marks");
                 columns.put("End Theory Marks","f_theory");
                 columns.put("End Practical Marks","f_practical");
@@ -777,7 +991,40 @@ public class Lecturer {
                 parentPanel.add(viewGradesAndGPA);
                 parentPanel.repaint();
                 parentPanel.revalidate();
+
+                if(selectCourseForGradeComboBox.getSelectedItem() == null) {
+                    showLecturerCourses();
+                }
             }
+
+                public void showLecturerCourses(){
+                    selectCourseForGradeComboBox.removeAllItems();
+
+                    DbConnector db = new DbConnector();
+                    conn = db.getConnection();
+
+                    String sql = "SELECT ccode FROM course WHERE lecusername = ?";
+
+                    try {
+                        PreparedStatement pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, lecUsername);
+                        ResultSet rs = pstmt.executeQuery();
+
+                        selectCourseForGradeComboBox.removeAllItems();
+
+                        while (rs.next()) {
+                            String ccode = rs.getString("ccode");
+                            selectCourseForGradeComboBox.addItem(ccode);
+                        }
+
+                        rs.close();
+                        pstmt.close();
+                        conn.close();
+
+                    } catch (SQLException e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
         });
 
         //View Students Details
