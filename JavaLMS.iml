@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://F:/Lab Sheets/Level 2 Sem 1/OOP Practicum/Project/mysql-connector-j-8.0.33/mysql-connector-j-8.0.33/mysql-connector-j-8.0.33.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" exported="" name="jdatepicker-2.0.3" level="project" />
+    <orderEntry type="library" exported="" name="mysql-connector-j-8.0.33" level="project" />
+    <orderEntry type="library" exported="" name="jgoodies-forms-1.9.0" level="project" />
+    <orderEntry type="library" exported="" name="jgoodies-common-1.8.1" level="project" />
+  </component>
+</module>
