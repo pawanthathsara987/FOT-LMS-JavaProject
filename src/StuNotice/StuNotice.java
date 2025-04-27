@@ -23,7 +23,7 @@ public class StuNotice {
     private String stuUsername;
 
 
-    public StuNotice(String stuUsername) {
+    public StuNotice() {
         frame = new JFrame("Notice");
         frame.setContentPane(rootPanel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

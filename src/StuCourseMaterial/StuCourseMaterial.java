@@ -269,7 +269,7 @@ public class StuCourseMaterial {
 
         // Use the absolute path to the Resources directory
         Path currentDir = Paths.get(System.getProperty("user.dir"));
-        Path basePath = currentDir.getParent().resolve(Paths.get("Resources", "Lecturer", "lectureNotes"));
+        Path basePath = currentDir.resolve(Paths.get("Resources", "Lecturer", "lectureNotes"));
         Path source = basePath.resolve(fname);
 
         // Debugging: Print the resolved source path
@@ -297,7 +297,7 @@ public class StuCourseMaterial {
 
             // Copy file with REPLACE_EXISTING option to overwrite if necessary
             Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-            JOptionPane.showMessageDialog(frame, "File downloaded successfully to: " + destination);
+            JOptionPane.showMessageDialog(frame, "File downloaded successfully to: \n" + destination);
 
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(frame, e.getMessage());
